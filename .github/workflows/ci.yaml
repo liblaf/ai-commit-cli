@@ -1,0 +1,94 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}
+
+jobs:
+  build:
+    name: Build
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install GNU Softwares
+        uses: liblaf/install-action@main
+        with:
+          brew: coreutils gnu-sed make
+          choco: gnuwin32-coreutils.install make sed
+      - name: Install Rust Toolchain
+        run: rustup default stable
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Build
+        run: make dist
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ runner.os }}-${{ runner.arch }}
+          path: dist/*
+    strategy:
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+          - windows-latest
+
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    outputs:
+      releases-created: ${{ steps.release.outputs.releases_created }}
+      tag-name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - id: release
+        name: Create GitHub Release
+        uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: rust
+
+  publish:
+    name: Publish
+    needs:
+      - release
+    if: needs.release.outputs.releases-created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Git Pull
+        run: git pull
+      - name: Install Rust Toolchain
+        run: rustup default stable
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
+      - name: Publish to Crates.io
+        run: cargo publish
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+
+  upload:
+    name: Upload Release Assets
+    needs:
+      - build
+      - release
+    if: needs.release.outputs.releases-created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@master
+        with:
+          tag_name: ${{ needs.release.outputs.tag-name }}
+          files: artifacts/**/*
