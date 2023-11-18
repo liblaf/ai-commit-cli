@@ -27,15 +27,20 @@ where
     Ok(())
 }
 
-pub fn diff<I, S>(exclude: I) -> Result<String>
+pub fn diff<I, J, S, T>(exclude: I, include: J) -> Result<String>
 where
     I: IntoIterator<Item = S>,
+    J: IntoIterator<Item = T>,
     S: AsRef<Path>,
+    T: AsRef<Path>,
 {
     let mut cmd = Command::new("git");
     cmd.args(["diff", "--cached"]);
     exclude.into_iter().for_each(|p| {
         cmd.arg(format!(":(exclude){}", p.as_ref().to_str().unwrap()));
+    });
+    include.into_iter().for_each(|p| {
+        cmd.arg(p.as_ref().to_str().unwrap());
     });
     cmd.stdin(Stdio::null())
         .stdout(Stdio::piped())
@@ -45,10 +50,12 @@ where
     String::from_utf8(output.stdout).log()
 }
 
-pub fn status<I, S>(exclude: I) -> Result<()>
+pub fn status<I, J, S, T>(exclude: I, include: J) -> Result<()>
 where
     I: IntoIterator<Item = S>,
+    J: IntoIterator<Item = T>,
     S: AsRef<Path>,
+    T: AsRef<Path>,
 {
     let mut cmd = Command::new("git");
     if std::io::stdout().is_terminal() {
@@ -57,6 +64,9 @@ where
     cmd.args(["status"]);
     exclude.into_iter().for_each(|p| {
         cmd.arg(format!(":(exclude){}", p.as_ref().to_str().unwrap()));
+    });
+    include.into_iter().for_each(|p| {
+        cmd.arg(p.as_ref().to_str().unwrap());
     });
     cmd.stdin(Stdio::null())
         .stdout(Stdio::inherit())
