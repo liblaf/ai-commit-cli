@@ -1,8 +1,9 @@
 use std::io::IsTerminal;
-use std::process::Command;
+use std::process::{Command, Stdio};
+
+use anyhow::Result;
 
 use crate::common::log::LogResult;
-use anyhow::Result;
 
 pub fn run() -> Result<()> {
     let mut cmd = Command::new("pre-commit");
@@ -10,6 +11,9 @@ pub fn run() -> Result<()> {
     if std::io::stdout().is_terminal() {
         cmd.arg("--color=always");
     }
+    cmd.stdin(Stdio::null())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit());
     let status = cmd.status()?;
     crate::ensure!(status.success());
     Ok(())

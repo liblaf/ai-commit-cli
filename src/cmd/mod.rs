@@ -1,4 +1,6 @@
 use anyhow::Result;
+use clap::builder::styling::AnsiColor;
+use clap::builder::Styles;
 use clap::{Parser, Subcommand};
 use tracing::Level;
 
@@ -6,7 +8,7 @@ mod commit;
 mod complete;
 
 #[derive(Debug, Parser)]
-#[command(version, author)]
+#[command(version, author, styles = STYLES)]
 pub struct Cmd {
     #[command(subcommand)]
     sub_cmd: SubCmd,
@@ -19,6 +21,12 @@ pub struct Cmd {
 pub trait Run {
     async fn run(&self) -> Result<()>;
 }
+
+const STYLES: Styles = Styles::styled()
+    .header(AnsiColor::Blue.on_default().bold())
+    .usage(AnsiColor::Cyan.on_default().bold())
+    .literal(AnsiColor::Green.on_default().bold())
+    .placeholder(AnsiColor::Magenta.on_default().bold());
 
 #[derive(Debug, Subcommand)]
 enum SubCmd {

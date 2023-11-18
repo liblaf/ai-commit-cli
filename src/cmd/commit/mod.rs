@@ -15,6 +15,9 @@ use regex::Regex;
 use crate::cmd::Run;
 use crate::common::log::LogResult;
 
+#[cfg(test)]
+mod tests;
+
 #[derive(Debug, Args)]
 pub struct Cmd {
     #[arg(short, long, env = "OPENAI_API_KEY")]
@@ -25,6 +28,9 @@ pub struct Cmd {
 
     #[arg(short, long)]
     include: Vec<PathBuf>,
+
+    #[arg(long, default_value_t = false)]
+    no_pre_commit: bool,
 
     #[arg(long, default_value = "gpt-3.5-turbo-16k")]
     model: String,
@@ -42,8 +48,6 @@ pub struct Cmd {
     top_p: f32,
 }
 
-const EXCLUDE: &[&str] = &["*-lock.*", "*.lock"];
-
 impl Cmd {
     fn api_key(&self) -> Result<String> {
         if let Some(api_key) = self.api_key.as_ref() {
@@ -56,16 +60,18 @@ impl Cmd {
     }
 }
 
+const EXCLUDE: &[&str] = &["*-lock.*", "*.lock"];
+
 #[async_trait::async_trait]
 impl Run for Cmd {
     async fn run(&self) -> anyhow::Result<()> {
-        crate::external::pre_commit::run()?;
-        let mut exclude: Vec<_> = EXCLUDE.iter().map(PathBuf::from).collect();
-        self.exclude
-            .iter()
-            .for_each(|f| exclude.push(f.to_path_buf()));
+        if !self.no_pre_commit {
+            crate::external::pre_commit::run()?;
+        }
+        let exclude: Vec<_> = EXCLUDE.iter().map(PathBuf::from).collect();
+        let exclude: Vec<_> = exclude.iter().chain(&self.exclude).collect();
         crate::external::git::status(&exclude, &self.include)?;
-        let diff = crate::external::git::diff(exclude, &self.include)?;
+        let diff = crate::external::git::diff(&exclude, &self.include)?;
         crate::ensure!(!diff.trim().is_empty());
         let client = Client::with_config(OpenAIConfig::new().with_api_key(self.api_key()?));
         let request = CreateChatCompletionRequestArgs::default()
