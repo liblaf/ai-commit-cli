@@ -87,6 +87,14 @@ impl Run for Cmd {
             .build()
             .log()?;
         let response = client.chat().create(request).await.log()?;
+        if let Some(usage) = response.usage {
+            println!(
+                "Tokens: {} (prompt) + {} (completion) = {} (total)",
+                usage.prompt_tokens.to_string().bold().cyan(),
+                usage.completion_tokens.to_string().bold().cyan(),
+                usage.total_tokens.to_string().bold().cyan()
+            );
+        }
         let select = Select::new(
             &format!(
                 "Pick a commit message to use: {}",
