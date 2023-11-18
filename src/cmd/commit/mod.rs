@@ -97,7 +97,9 @@ impl Run for Cmd {
             .top_p(self.top_p)
             .build()
             .log()?;
+        tracing::debug!("{:#?}", request);
         let response = client.chat().create(request).await.log()?;
+        tracing::debug!("{:#?}", response);
         if let Some(usage) = response.usage {
             println!(
                 "Tokens: {} (prompt) + {} (completion) = {} (total)",
@@ -132,7 +134,7 @@ where
     let mut lines: Vec<_> = message.trim().split('\n').collect();
     let subject = lines[0].trim();
     let pattern: Regex =
-        Regex::new(r"(?P<type>\w+)(?:\((?P<scope>\w+)\))?(?P<breaking>!)?: (?P<description>.+)")
+        Regex::new(r"(?P<type>\w+)(?:\((?P<scope>\S+)\))?(?P<breaking>!)?: (?P<description>.+)")
             .log()
             .unwrap();
     let matches = pattern.captures(subject)?;
