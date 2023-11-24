@@ -58,7 +58,7 @@ where
             .skip(1)
             .enumerate()
             .map(|(i, e)| format!("{:>5}: {}", i, e))
-            .collect::<Vec<String>>()
+            .collect::<Vec<_>>()
             .join("\n");
         if !sources.is_empty() {
             message += "\nCaused by:\n";
