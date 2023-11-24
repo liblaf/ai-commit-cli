@@ -20,10 +20,11 @@ mod tests;
 
 #[derive(Debug, Args)]
 pub struct Cmd {
+    /// If not provided, will use `bw get notes OPENAI_API_KEY`
     #[arg(short, long, env = "OPENAI_API_KEY")]
     api_key: Option<String>,
 
-    #[arg(short, long)]
+    #[arg(short, long, default_values = EXCLUDE)]
     exclude: Vec<PathBuf>,
 
     #[arg(short, long)]
@@ -32,32 +33,31 @@ pub struct Cmd {
     #[arg(long, default_value_t = false)]
     no_pre_commit: bool,
 
+    #[arg(short, long)]
+    prompt: Option<String>,
+
+    #[arg(long)]
+    prompt_file: Option<PathBuf>,
+
+    /// ID of the model to use
     #[arg(long, default_value = "gpt-3.5-turbo-16k")]
     model: String,
 
+    /// The maximum number of tokens to generate in the chat completion
     #[arg(long, default_value_t = 500)]
     max_tokens: u16,
 
+    /// How many chat completion choices to generate for each input message
     #[arg(short, default_value_t = 1)]
     n: u8,
 
+    /// What sampling temperature to use, between 0 and 2
     #[arg(long, default_value_t = 0.0)]
     temperature: f32,
 
+    /// An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass
     #[arg(long, default_value_t = 0.1)]
     top_p: f32,
-}
-
-impl Cmd {
-    fn api_key(&self) -> Result<String> {
-        if let Some(api_key) = self.api_key.as_ref() {
-            return Ok(api_key.to_string());
-        }
-        if let Ok(api_key) = crate::external::bitwarden::get_notes("OPENAI_KEY") {
-            return Ok(api_key);
-        }
-        crate::bail!("OPENAI_API_KEY is not provided");
-    }
 }
 
 const EXCLUDE: &[&str] = &["*-lock.*", "*.lock"];
@@ -77,10 +77,7 @@ impl Run for Cmd {
         let request = CreateChatCompletionRequestArgs::default()
             .messages([
                 ChatCompletionRequestSystemMessageArgs::default()
-                    .content(include_str!(concat!(
-                        env!("CARGO_MANIFEST_DIR"),
-                        "/res/prompt.md"
-                    )))
+                    .content(self.prompt()?)
                     .build()
                     .log()?
                     .into(),
@@ -123,6 +120,28 @@ impl Run for Cmd {
         .prompt()
         .log()?;
         crate::external::git::commit(select)
+    }
+}
+
+impl Cmd {
+    fn api_key(&self) -> Result<String> {
+        if let Some(api_key) = self.api_key.as_deref() {
+            return Ok(api_key.to_string());
+        }
+        if let Ok(api_key) = crate::external::bitwarden::get_notes("OPENAI_API_KEY") {
+            return Ok(api_key);
+        }
+        crate::bail!("OPENAI_API_KEY is not provided");
+    }
+
+    fn prompt(&self) -> Result<String> {
+        if let Some(prompt) = self.prompt.as_deref() {
+            return Ok(prompt.to_string());
+        }
+        if let Some(prompt_file) = self.prompt_file.as_deref() {
+            return std::fs::read_to_string(prompt_file).log();
+        }
+        Ok(include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/res/prompt.md")).to_string())
     }
 }
 

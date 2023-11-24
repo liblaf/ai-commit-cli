@@ -15,7 +15,7 @@ where
         .stdin(Stdio::piped())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit());
-    let mut child = cmd.spawn()?;
+    let mut child = cmd.spawn().log()?;
     child
         .stdin
         .as_ref()

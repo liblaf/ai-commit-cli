@@ -2,7 +2,8 @@ use anyhow::Result;
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::{Parser, Subcommand};
-use tracing::Level;
+
+use crate::common::log::Level;
 
 mod commit;
 mod complete;
@@ -13,7 +14,7 @@ pub struct Cmd {
     #[command(subcommand)]
     sub_cmd: SubCmd,
 
-    #[arg(short, long, default_value_t = Level::INFO)]
+    #[arg(short, long, env, default_value_t = Level::Info)]
     log_level: Level,
 }
 
@@ -37,10 +38,21 @@ enum SubCmd {
 #[async_trait::async_trait]
 impl Run for Cmd {
     async fn run(&self) -> Result<()> {
-        tracing_subscriber::fmt()
-            .pretty()
-            .with_max_level(self.log_level)
-            .init();
+        if self.log_level < Level::Info {
+            tracing_subscriber::fmt()
+                .pretty()
+                .with_max_level(self.log_level.as_level())
+                .init();
+        } else {
+            tracing_subscriber::fmt()
+                .pretty()
+                .with_file(false)
+                .with_line_number(false)
+                .with_max_level(self.log_level.as_level())
+                .with_target(false)
+                .without_time()
+                .init();
+        }
         match &self.sub_cmd {
             SubCmd::Commit(cmd) => cmd.run().await,
             SubCmd::Complete(cmd) => cmd.run().await,

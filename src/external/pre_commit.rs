@@ -14,7 +14,7 @@ pub fn run() -> Result<()> {
     cmd.stdin(Stdio::null())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit());
-    let status = cmd.status()?;
+    let status = cmd.status().log()?;
     crate::ensure!(status.success());
     Ok(())
 }

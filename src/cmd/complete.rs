@@ -3,6 +3,9 @@ use clap_complete::Shell;
 
 use crate::cmd::Run;
 
+/// Generate tab-completion scripts for your shell
+///
+/// $ ai-commit-cli complete fish >$HOME/.local/share/fish/vendor_completions.d
 #[derive(Debug, Args)]
 pub struct Cmd {
     shell: Shell,
