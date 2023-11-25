@@ -4,10 +4,9 @@ This document contains the help content for the `ai-commit-cli` command-line pro
 
 **Command Overview:**
 
-- [Command-Line Help for `ai-commit-cli`](#command-line-help-for-ai-commit-cli)
-  - [`ai-commit-cli`](#ai-commit-cli) - [**Subcommands:**](#subcommands) - [**Options:**](#options)
-  - [`ai-commit-cli commit`](#ai-commit-cli-commit) - [**Options:**](#options-1)
-  - [`ai-commit-cli complete`](#ai-commit-cli-complete) - [**Arguments:**](#arguments)
+- [`ai-commit-cli`↴](#ai-commit-cli)
+- [`ai-commit-cli commit`↴](#ai-commit-cli-commit)
+- [`ai-commit-cli complete`↴](#ai-commit-cli-complete)
 
 ## `ai-commit-cli`
 
@@ -68,7 +67,10 @@ This document contains the help content for the `ai-commit-cli` command-line pro
 
 Generate tab-completion scripts for your shell
 
-$ ai-commit-cli complete fish >$HOME/.local/share/fish/vendor_completions.d $ ai-commit-cli complete fish >/usr/local/share/fish/vendor_completions.d
+```fish
+$ ai-commit-cli complete fish >$HOME/.local/share/fish/vendor_completions.d
+$ ai-commit-cli complete fish >/usr/local/share/fish/vendor_completions.d
+```
 
 **Usage:** `ai-commit-cli complete <SHELL>`
 

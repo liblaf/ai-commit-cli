@@ -32,6 +32,7 @@ dist/$(NAME)-$(TARGET)$(EXE): target/release/$(NAME)$(EXE)
 docs/usage.md:
 	@ mkdir --parents --verbose $(@D)
 	cargo run complete markdown >$@
+	- prettier --write $@
 
 .PHONY: target/release/$(NAME)$(EXE)
 target/release/$(NAME)$(EXE):

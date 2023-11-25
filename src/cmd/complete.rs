@@ -5,9 +5,12 @@ use crate::cmd::Run;
 
 /// Generate tab-completion scripts for your shell
 ///
+/// ```fish
 /// $ ai-commit-cli complete fish >$HOME/.local/share/fish/vendor_completions.d
 /// $ ai-commit-cli complete fish >/usr/local/share/fish/vendor_completions.d
+/// ```
 #[derive(Debug, Args)]
+#[command(verbatim_doc_comment)]
 pub struct Cmd {
     shell: Generator,
 }
