@@ -7,17 +7,19 @@ else
   EXE :=
 endif
 
-all: check
+all: check docs
 
 check:
 	cargo check
 	cargo clippy
 
 clean:
-	@ $(RM) --recursive --verbose dist
+	@ rm --force --recursive --verbose dist
 	cargo clean
 
 dist: dist/$(NAME)-$(TARGET)$(EXE)
+
+docs: docs/usage.md
 
 ###############
 # Auxiliaries #
@@ -25,6 +27,11 @@ dist: dist/$(NAME)-$(TARGET)$(EXE)
 
 dist/$(NAME)-$(TARGET)$(EXE): target/release/$(NAME)$(EXE)
 	@ install -D --no-target-directory --verbose $< $@
+
+.PHONY: docs/usage.md
+docs/usage.md:
+	@ mkdir --parents --verbose $(@D)
+	cargo run complete markdown >$@
 
 .PHONY: target/release/$(NAME)$(EXE)
 target/release/$(NAME)$(EXE):

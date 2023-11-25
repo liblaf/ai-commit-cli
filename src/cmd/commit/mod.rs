@@ -1,3 +1,6 @@
+#[cfg(test)]
+mod tests;
+
 use std::path::PathBuf;
 
 use anyhow::Result;
@@ -14,9 +17,6 @@ use regex::Regex;
 
 use crate::cmd::Run;
 use crate::common::log::LogResult;
-
-#[cfg(test)]
-mod tests;
 
 #[derive(Debug, Args)]
 pub struct Cmd {
@@ -62,17 +62,39 @@ pub struct Cmd {
 
 const EXCLUDE: &[&str] = &["*-lock.*", "*.lock"];
 
+impl Cmd {
+    fn api_key(&self) -> Result<String> {
+        if let Some(api_key) = self.api_key.as_deref() {
+            return Ok(api_key.to_string());
+        }
+        if let Ok(api_key) = crate::external::bitwarden::get_notes("OPENAI_API_KEY") {
+            return Ok(api_key);
+        }
+        crate::bail!("OPENAI_API_KEY is not provided");
+    }
+
+    fn prompt(&self) -> Result<String> {
+        if let Some(prompt) = self.prompt.as_deref() {
+            return Ok(prompt.to_string());
+        }
+        if let Some(prompt_file) = self.prompt_file.as_deref() {
+            return std::fs::read_to_string(prompt_file).log();
+        }
+        Ok(include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/res/prompt.md")).to_string())
+    }
+}
+
 #[async_trait::async_trait]
 impl Run for Cmd {
     async fn run(&self) -> anyhow::Result<()> {
         if !self.no_pre_commit {
             crate::external::pre_commit::run()?;
         }
-        let exclude: Vec<_> = EXCLUDE.iter().map(PathBuf::from).collect();
-        let exclude: Vec<_> = exclude.iter().chain(&self.exclude).collect();
-        crate::external::git::status(&exclude, &self.include)?;
-        let diff = crate::external::git::diff(&exclude, &self.include)?;
-        crate::ensure!(!diff.trim().is_empty());
+        crate::external::git::status(&self.exclude, &self.include)?;
+        let diff = crate::external::git::diff(&self.exclude, &self.include)?;
+        if diff.trim().is_empty() {
+            crate::bail!("no changes added to commit (use \"git add\" and/or \"git commit -a\")");
+        }
         let client = Client::with_config(OpenAIConfig::new().with_api_key(self.api_key()?));
         let request = CreateChatCompletionRequestArgs::default()
             .messages([
@@ -120,28 +142,6 @@ impl Run for Cmd {
         .prompt()
         .log()?;
         crate::external::git::commit(select)
-    }
-}
-
-impl Cmd {
-    fn api_key(&self) -> Result<String> {
-        if let Some(api_key) = self.api_key.as_deref() {
-            return Ok(api_key.to_string());
-        }
-        if let Ok(api_key) = crate::external::bitwarden::get_notes("OPENAI_API_KEY") {
-            return Ok(api_key);
-        }
-        crate::bail!("OPENAI_API_KEY is not provided");
-    }
-
-    fn prompt(&self) -> Result<String> {
-        if let Some(prompt) = self.prompt.as_deref() {
-            return Ok(prompt.to_string());
-        }
-        if let Some(prompt_file) = self.prompt_file.as_deref() {
-            return std::fs::read_to_string(prompt_file).log();
-        }
-        Ok(include_str!(concat!(env!("CARGO_MANIFEST_DIR"), "/res/prompt.md")).to_string())
     }
 }
 

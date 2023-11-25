@@ -3,7 +3,7 @@ use std::process::{Command, Stdio};
 
 use anyhow::Result;
 
-use crate::common::log::LogResult;
+use crate::common::log::LogError;
 
 pub fn run() -> Result<()> {
     let mut cmd = Command::new("pre-commit");
@@ -14,7 +14,17 @@ pub fn run() -> Result<()> {
     cmd.stdin(Stdio::null())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit());
-    let status = cmd.status().log()?;
+    tracing::debug!("{:?}", cmd);
+    let status = match cmd.status() {
+        Ok(status) => status,
+        Err(e) => {
+            if e.kind() == std::io::ErrorKind::NotFound {
+                return Ok(());
+            } else {
+                return Err(e.log());
+            }
+        }
+    };
     crate::ensure!(status.success());
     Ok(())
 }

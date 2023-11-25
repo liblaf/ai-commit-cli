@@ -1,6 +1,8 @@
-use std::{fmt::Display, panic::Location};
+use std::fmt::Display;
+use std::panic::Location;
 
 use clap::ValueEnum;
+use tracing::level_filters::LevelFilter;
 
 #[derive(Clone, Debug, ValueEnum, PartialEq, PartialOrd)]
 pub enum Level {
@@ -33,14 +35,14 @@ impl Display for Level {
     }
 }
 
-impl Level {
-    pub fn as_level(&self) -> tracing::Level {
-        match self {
-            Self::Trace => tracing::Level::TRACE,
-            Self::Debug => tracing::Level::DEBUG,
-            Self::Info => tracing::Level::INFO,
-            Self::Warn => tracing::Level::WARN,
-            Self::Error => tracing::Level::ERROR,
+impl From<Level> for LevelFilter {
+    fn from(value: Level) -> LevelFilter {
+        match value {
+            Level::Trace => tracing::Level::TRACE.into(),
+            Level::Debug => tracing::Level::DEBUG.into(),
+            Level::Info => tracing::Level::INFO.into(),
+            Level::Warn => tracing::Level::WARN.into(),
+            Level::Error => tracing::Level::ERROR.into(),
         }
     }
 }

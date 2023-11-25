@@ -1,12 +1,12 @@
+mod commit;
+mod complete;
+
 use anyhow::Result;
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::{Parser, Subcommand};
 
 use crate::common::log::Level;
-
-mod commit;
-mod complete;
 
 #[derive(Debug, Parser)]
 #[command(version, author, styles = STYLES)]
@@ -41,14 +41,14 @@ impl Run for Cmd {
         if self.log_level < Level::Info {
             tracing_subscriber::fmt()
                 .pretty()
-                .with_max_level(self.log_level.as_level())
+                .with_max_level(self.log_level.to_owned())
                 .init();
         } else {
             tracing_subscriber::fmt()
                 .pretty()
                 .with_file(false)
                 .with_line_number(false)
-                .with_max_level(self.log_level.as_level())
+                .with_max_level(self.log_level.to_owned())
                 .with_target(false)
                 .without_time()
                 .init();

@@ -15,6 +15,7 @@ where
         .stdin(Stdio::piped())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit());
+    tracing::debug!("{:?}", cmd);
     let mut child = cmd.spawn().log()?;
     child
         .stdin
@@ -45,6 +46,7 @@ where
     cmd.stdin(Stdio::null())
         .stdout(Stdio::piped())
         .stderr(Stdio::inherit());
+    tracing::debug!("{:?}", cmd);
     let output = cmd.output().log()?;
     crate::ensure!(output.status.success());
     String::from_utf8(output.stdout).log()
@@ -68,6 +70,7 @@ where
     include.into_iter().for_each(|p| {
         cmd.arg(p.as_ref().to_str().unwrap());
     });
+    tracing::debug!("{:?}", cmd);
     cmd.stdin(Stdio::null())
         .stdout(Stdio::inherit())
         .stderr(Stdio::inherit());
