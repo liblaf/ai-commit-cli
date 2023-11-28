@@ -2,10 +2,9 @@
 
 ## [0.3.0](https://github.com/liblaf/ai-commit-cli/compare/v0.2.0...v0.3.0) (2023-11-28)
 
-
 ### Features
 
-* add support for multiline commit messages ([d5e53b0](https://github.com/liblaf/ai-commit-cli/commit/d5e53b000360728bfcd1a7efe5f1265cfcfff0a6))
+- add support for multiline commit messages ([d5e53b0](https://github.com/liblaf/ai-commit-cli/commit/d5e53b000360728bfcd1a7efe5f1265cfcfff0a6))
 
 ## [0.2.0](https://github.com/liblaf/ai-commit-cli/compare/v0.1.0...v0.2.0) (2023-11-25)
 
