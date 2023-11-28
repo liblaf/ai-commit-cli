@@ -1,4 +1,6 @@
-use clap::{builder::PossibleValue, Args, CommandFactory, ValueEnum};
+use anyhow::Result;
+use clap::builder::PossibleValue;
+use clap::{Args, CommandFactory, ValueEnum};
 use clap_complete::Shell;
 
 use crate::cmd::Run;
@@ -33,7 +35,7 @@ impl ValueEnum for Generator {
         ]
     }
 
-    fn to_possible_value(&self) -> Option<clap::builder::PossibleValue> {
+    fn to_possible_value(&self) -> Option<PossibleValue> {
         match self {
             Self::Markdown => Some(PossibleValue::new("markdown")),
             Self::Shell(shell) => shell.to_possible_value(),
@@ -43,7 +45,7 @@ impl ValueEnum for Generator {
 
 #[async_trait::async_trait]
 impl Run for Cmd {
-    async fn run(&self) -> anyhow::Result<()> {
+    async fn run(&self) -> Result<()> {
         let cmd = &mut crate::cmd::Cmd::command();
         match self.shell {
             Generator::Markdown => clap_markdown::print_help_markdown::<crate::cmd::Cmd>(),

@@ -150,18 +150,38 @@ where
     S: AsRef<str>,
 {
     let message = message.as_ref();
-    let mut lines: Vec<_> = message.trim().split('\n').collect();
-    let subject = lines[0].trim();
+    let lines: Vec<_> = message.trim().split('\n').map(sanitize_line).collect();
+    if validate(lines.first()?) {
+        Some(lines.join("\n"))
+    } else {
+        None
+    }
+}
+
+fn sanitize_line<S>(message: S) -> String
+where
+    S: AsRef<str>,
+{
+    let message = message.as_ref();
     let pattern: Regex =
-        Regex::new(r"(?P<type>\w+)(?:\((?P<scope>\S+)\))?(?P<breaking>!)?: (?P<description>.+)")
+        Regex::new(r"(?P<type>\w+)(?:\((?P<scope>[^\)]+)\))?(?P<breaking>!)?: (?P<description>.+)")
             .log()
             .unwrap();
-    let matches = pattern.captures(subject)?;
-    let type_ = matches.name("type")?.as_str();
+    let matches = match pattern.captures(message) {
+        Some(matches) => matches,
+        None => return message.to_string(),
+    };
+    let type_ = matches.name("type").unwrap().as_str();
     let scope = matches.name("scope").map(|s| s.as_str().to_lowercase());
     let breaking = matches.name("breaking").is_some();
-    let description = matches.name("description")?.as_str();
-    let description = description.chars().next()?.to_lowercase().to_string() + &description[1..];
+    let description = matches.name("description").unwrap().as_str();
+    let description = description
+        .chars()
+        .next()
+        .unwrap()
+        .to_lowercase()
+        .to_string()
+        + &description[1..];
     let mut subject = type_.to_string();
     if let Some(scope) = scope {
         subject += &format!("({})", scope);
@@ -171,6 +191,17 @@ where
     }
     subject += ": ";
     subject += &description;
-    lines[0] = &subject;
-    Some(lines.join("\n"))
+    subject
+}
+
+fn validate<S>(message: S) -> bool
+where
+    S: AsRef<str>,
+{
+    let message = message.as_ref();
+    let pattern: Regex =
+        Regex::new(r"(?P<type>\w+)(?:\((?P<scope>[^\)]+)\))?(?P<breaking>!)?: (?P<description>.+)")
+            .log()
+            .unwrap();
+    pattern.is_match(message)
 }

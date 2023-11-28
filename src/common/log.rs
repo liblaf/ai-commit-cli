@@ -4,7 +4,7 @@ use std::panic::Location;
 use clap::ValueEnum;
 use tracing::level_filters::LevelFilter;
 
-#[derive(Clone, Debug, ValueEnum, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, PartialEq, PartialOrd, ValueEnum)]
 pub enum Level {
     Trace,
     Debug,

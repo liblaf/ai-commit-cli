@@ -32,3 +32,11 @@ fn test_sanitize_invalid_message() {
     let expected = None;
     assert_eq!(super::sanitize(message), expected);
 }
+
+#[test]
+fn test_sanitize_multiline_message() {
+    let message = "feat: add new feature\n\nfeat: This is a multiline commit message";
+    let expected =
+        Some("feat: add new feature\n\nfeat: this is a multiline commit message".to_string());
+    assert_eq!(super::sanitize(message), expected);
+}

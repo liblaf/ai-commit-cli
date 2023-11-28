@@ -1,11 +1,7 @@
 NAME   := ai-commit-cli
 TARGET != rustc --version --verbose | sed --quiet "s/host: //p"
 
-ifeq ($(OS), Windows_NT)
-  EXE := .exe
-else
-  EXE :=
-endif
+EXE := $(if $(filter Windows_NT,$(OS)),.exe)
 
 all: check docs
 
@@ -32,7 +28,7 @@ dist/$(NAME)-$(TARGET)$(EXE): target/release/$(NAME)$(EXE)
 docs/usage.md:
 	@ mkdir --parents --verbose $(@D)
 	cargo run complete markdown >$@
-	- prettier --write $@
+	prettier --write $@
 
 .PHONY: target/release/$(NAME)$(EXE)
 target/release/$(NAME)$(EXE):
