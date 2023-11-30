@@ -32,8 +32,7 @@ repos:
     rev: v3.1.0
     hooks:
       - id: prettier
-        stages:
-          - pre-commit
+        stages: [pre-commit]
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
     hooks:
@@ -72,10 +71,33 @@ repos:
       - id: poetry-export
         args: [--without-hashes, --without-urls]
       - id: poetry-install
-  - repo: https://github.com/liblaf/template
-    rev: main
+  - repo: https://github.com/scop/pre-commit-shfmt
+    rev: v3.7.0-4
+    hooks:
+      - id: shfmt
+        args:
+          - --write
+          - --simplify
+          - --indent=2
+          - --case-indent
+          - --space-redirects
+  - repo: local
     hooks:
       - id: cargo-check
+        name: cargo check
+        entry: cargo check
+        language: rust
+        types: [rust]
+        pass_filenames: false
       - id: cargo-clippy
+        name: cargo clippy
+        entry: cargo clippy
+        language: rust
+        types: [rust]
+        pass_filenames: false
       - id: cargo-fmt
-      - id: shfmt
+        name: cargo fmt
+        entry: cargo fmt
+        language: rust
+        types: [rust]
+        pass_filenames: false
