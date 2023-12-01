@@ -2,10 +2,9 @@
 
 ## [0.4.0](https://github.com/liblaf/ai-commit-cli/compare/v0.3.0...v0.4.0) (2023-12-01)
 
-
 ### Features
 
-* **cmd:** add verbosity flag for logging ([d700ff3](https://github.com/liblaf/ai-commit-cli/commit/d700ff34aeeeeb4b4dbe7195223de3ff18f23c2f))
+- **cmd:** add verbosity flag for logging ([d700ff3](https://github.com/liblaf/ai-commit-cli/commit/d700ff34aeeeeb4b4dbe7195223de3ff18f23c2f))
 
 ## [0.3.0](https://github.com/liblaf/ai-commit-cli/compare/v0.2.0...v0.3.0) (2023-11-28)
 
