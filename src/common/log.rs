@@ -1,17 +1,4 @@
-use std::fmt::Display;
 use std::panic::Location;
-
-use clap::ValueEnum;
-use tracing::level_filters::LevelFilter;
-
-#[derive(Clone, Debug, PartialEq, PartialOrd, ValueEnum)]
-pub enum Level {
-    Trace,
-    Debug,
-    Info,
-    Warn,
-    Error,
-}
 
 pub trait LogError {
     #[track_caller]
@@ -21,30 +8,6 @@ pub trait LogError {
 pub trait LogResult<T> {
     #[track_caller]
     fn log(self) -> anyhow::Result<T>;
-}
-
-impl Display for Level {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Self::Trace => write!(f, "trace"),
-            Self::Debug => write!(f, "debug"),
-            Self::Info => write!(f, "info"),
-            Self::Warn => write!(f, "warn"),
-            Self::Error => write!(f, "error"),
-        }
-    }
-}
-
-impl From<Level> for LevelFilter {
-    fn from(value: Level) -> LevelFilter {
-        match value {
-            Level::Trace => tracing::Level::TRACE.into(),
-            Level::Debug => tracing::Level::DEBUG.into(),
-            Level::Info => tracing::Level::INFO.into(),
-            Level::Warn => tracing::Level::WARN.into(),
-            Level::Error => tracing::Level::ERROR.into(),
-        }
-    }
 }
 
 impl<E> LogError for E

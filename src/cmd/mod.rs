@@ -5,8 +5,12 @@ use anyhow::Result;
 use clap::builder::styling::AnsiColor;
 use clap::builder::Styles;
 use clap::{Parser, Subcommand};
+use clap_verbosity_flag::{InfoLevel, Verbosity};
 
-use crate::common::log::Level;
+#[async_trait::async_trait]
+pub trait Run {
+    async fn run(&self) -> Result<()>;
+}
 
 #[derive(Debug, Parser)]
 #[command(version, author, styles = STYLES)]
@@ -14,13 +18,8 @@ pub struct Cmd {
     #[command(subcommand)]
     sub_cmd: SubCmd,
 
-    #[arg(short, long, env, default_value_t = Level::Info)]
-    log_level: Level,
-}
-
-#[async_trait::async_trait]
-pub trait Run {
-    async fn run(&self) -> Result<()>;
+    #[command(flatten)]
+    verbosity: Verbosity<InfoLevel>,
 }
 
 const STYLES: Styles = Styles::styled()
@@ -38,20 +37,29 @@ enum SubCmd {
 #[async_trait::async_trait]
 impl Run for Cmd {
     async fn run(&self) -> Result<()> {
-        if self.log_level < Level::Info {
-            tracing_subscriber::fmt()
-                .pretty()
-                .with_max_level(self.log_level.to_owned())
-                .init();
-        } else {
-            tracing_subscriber::fmt()
-                .pretty()
-                .with_file(false)
-                .with_line_number(false)
-                .with_max_level(self.log_level.to_owned())
-                .with_target(false)
-                .without_time()
-                .init();
+        let level = self.verbosity.log_level().map(|level| match level {
+            clap_verbosity_flag::Level::Error => tracing::Level::ERROR,
+            clap_verbosity_flag::Level::Warn => tracing::Level::WARN,
+            clap_verbosity_flag::Level::Info => tracing::Level::INFO,
+            clap_verbosity_flag::Level::Debug => tracing::Level::DEBUG,
+            clap_verbosity_flag::Level::Trace => tracing::Level::TRACE,
+        });
+        if let Some(level) = level {
+            if level < tracing::Level::DEBUG {
+                tracing_subscriber::fmt()
+                    .pretty()
+                    .with_file(false)
+                    .with_line_number(false)
+                    .with_max_level(level)
+                    .with_target(false)
+                    .without_time()
+                    .init();
+            } else {
+                tracing_subscriber::fmt()
+                    .pretty()
+                    .with_max_level(level)
+                    .init();
+            }
         }
         match &self.sub_cmd {
             SubCmd::Commit(cmd) => cmd.run().await,

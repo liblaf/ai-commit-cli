@@ -1,16 +1,14 @@
-name: CI/CD
+name: CI
 
 on:
   push:
-    branches:
-      - main
 
 permissions:
   contents: write
   pull-requests: write
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   build:
@@ -20,7 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install GNU Softwares
-        uses: liblaf/install-action@main
+        uses: liblaf/template/.github/actions/install@main
         with:
           brew: coreutils gnu-sed make
           choco: gnuwin32-coreutils.install make sed
@@ -44,6 +42,7 @@ jobs:
 
   release:
     name: Create GitHub Release
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     outputs:
       releases-created: ${{ steps.release.outputs.releases_created }}

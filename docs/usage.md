@@ -19,11 +19,8 @@ This document contains the help content for the `ai-commit-cli` command-line pro
 
 ###### **Options:**
 
-- `-l`, `--log-level <LOG_LEVEL>`
-
-  Default value: `info`
-
-  Possible values: `trace`, `debug`, `info`, `warn`, `error`
+- `-v`, `--verbose` — More output per occurrence
+- `-q`, `--quiet` — Less output per occurrence
 
 ## `ai-commit-cli commit`
 

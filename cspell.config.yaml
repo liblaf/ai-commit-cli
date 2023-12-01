@@ -1,0 +1,16 @@
+words:
+  - choco
+  - gomod
+  - liblaf
+  - nointeraction
+  - swatinem
+ignorePaths:
+  - "*-lock.*"
+  - "*.lock"
+dictionaries:
+  - bash
+  - cpp
+  - cpp-refined
+  - makefile
+  - npm
+allowCompoundWords: true
