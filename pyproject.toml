@@ -8,7 +8,7 @@ description = "A CLI that writes your git commit messages for you with AI"
 include = ["docs/prompt.md"]
 name = "ai-commit-cli"
 readme = "README.md"
-version = "0.4.0"
+version = "0.5.0"
 
 [tool.poetry.dependencies]
 httpx = { extras = ["socks"], version = "^0.25.2" }
