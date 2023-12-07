@@ -43,6 +43,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install GNU Softwares
+        uses: liblaf/template/.github/actions/install@main
+        with:
+          brew: coreutils
+          choco: gnuwin32-coreutils.install
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
@@ -77,8 +82,8 @@ jobs:
   upload:
     name: Upload Release Assets
     needs:
-      - build-exe
       - build-pkg
+      - build-exe
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
@@ -89,5 +94,6 @@ jobs:
       - name: Upload Release Assets
         uses: softprops/action-gh-release@master
         with:
-          tag_name: dev
+          prerelease: true
           files: artifacts/**/*
+          tag_name: dev

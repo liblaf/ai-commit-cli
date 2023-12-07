@@ -19,13 +19,7 @@ tasks:
 
   dist:
     cmds:
-      - cmd: python -m nuitka --standalone --onefile
-          --output-filename="aic-{{OS}}-{{ARCH}}-py{{.PYTHON_VERSION}}{{exeExt}}"
-          --output-dir="dist" --remove-output main.py
-        ignore_error: true
-      - cmd: pyinstaller --distpath="dist" --onefile
-          --name="aic-{{OS}}-{{ARCH}}-py{{.PYTHON_VERSION}}" main.py
-        ignore_error: true
+      - bash scripts/dist.sh "{{OS}}" "{{ARCH}}" "{{.PYTHON_VERSION}}" "{{exeExt}}"
     vars:
       PYTHON_VERSION:
         sh: python scripts/python_version.py
@@ -36,7 +30,7 @@ tasks:
 
   setup:
     cmds:
-      - micromamba --yes --name="ai-commit-cli" create libpython-static python=3.12
+      - micromamba --yes --name="ai-commit-cli" create libpython-static python=3.11
       - micromamba --yes --name="ai-commit-cli" run poetry install
 
   test:
