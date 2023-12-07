@@ -1,7 +1,9 @@
-name: CI
+name: Release
 
 on:
   push:
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -73,12 +75,53 @@ jobs:
           - "3.11"
           - "3.12"
 
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    outputs:
+      created: ${{ steps.release.outputs.releases_created }}
+      tag: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - id: release
+        name: Create GitHub Release
+        uses: google-github-actions/release-please-action@v4
+        with:
+          release-type: python
+
+  publish:
+    name: Publish to PyPI
+    needs:
+      - release
+    if: needs.release.outputs.created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: poetry
+      - name: Install Dependencies
+        run: poetry install
+      - name: Publish to PyPI
+        run: poetry publish --build
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+    strategy:
+      matrix:
+        python-version:
+          - "3.11"
+
   upload:
     name: Upload Release Assets
     needs:
       - build-exe
       - build-pkg
-    if: github.ref == 'refs/heads/main'
+      - release
+    if: needs.release.outputs.created == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Download Artifacts
@@ -88,5 +131,5 @@ jobs:
       - name: Upload Release Assets
         uses: softprops/action-gh-release@master
         with:
-          tag_name: dev
+          tag_name: ${{ needs.release.outputs.tag }}
           files: artifacts/**/*

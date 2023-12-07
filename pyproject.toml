@@ -1,0 +1,36 @@
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core"]
+
+[tool.poetry]
+authors = ["liblaf <i@liblaf.me>"]
+description = "A CLI that writes your git commit messages for you with AI"
+include = ["docs/prompt.md"]
+name = "ai-commit-cli"
+readme = "README.md"
+version = "0.4.0"
+
+[tool.poetry.dependencies]
+httpx = { extras = ["socks"], version = "^0.25.2" }
+openai = "^1.3.7"
+python = "^3.10"
+questionary = "^2.0.1"
+rich = "^13.7.0"
+tiktoken = "^0.5.2"
+typer = "^0.9.0"
+
+[tool.poetry.group.dev.dependencies]
+nuitka = "^1.9.3"
+pyinstaller = { python = ">=3.10,<3.13", version = "^6.2.0" }
+pytest = "^7.4.3"
+
+[tool.poetry.scripts]
+aic = "ai_commit_cli.cmd.main:app"
+
+[[tool.poetry.source]]
+name = "mirrors"
+priority = "default"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+
+[tool.ruff.lint]
+select = ["B", "E", "F", "I", "SIM", "UP"]

@@ -1,0 +1,44 @@
+version: "3"
+
+tasks:
+  assets:
+    cmds:
+      - bash scripts/deploy-gh-pages.sh demo assets
+
+  build:
+    cmds:
+      - poetry build
+
+  clean:
+    cmds:
+      - git clean -d --force -X
+
+  demo:
+    cmds:
+      - vhs demo/demo.tape
+
+  dist:
+    cmds:
+      - cmd: python -m nuitka --standalone --onefile
+          --output-filename="aic-{{OS}}-{{ARCH}}-py{{.PYTHON_VERSION}}{{exeExt}}"
+          --output-dir="dist" --remove-output main.py
+        ignore_error: true
+      - cmd: pyinstaller --distpath="dist" --onefile
+          --name="aic-{{OS}}-{{ARCH}}-py{{.PYTHON_VERSION}}" main.py
+        ignore_error: true
+    vars:
+      PYTHON_VERSION:
+        sh: python scripts/python_version.py
+
+  publish:
+    cmds:
+      - poetry publish
+
+  setup:
+    cmds:
+      - micromamba --yes --name="ai-commit-cli" create libpython-static python=3.11
+      - micromamba --yes --name="ai-commit-cli" run poetry install
+
+  test:
+    cmds:
+      - pytest

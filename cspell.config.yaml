@@ -1,9 +1,22 @@
 words:
-  - choco
+  - cython
+  - dmypy
   - gomod
+  - httpx
+  - ipynb
   - liblaf
+  - mkdocs
   - nointeraction
-  - swatinem
+  - nuitka
+  - pybuilder
+  - pycache
+  - pyflow
+  - pyinstaller
+  - pypa
+  - pypackages
+  - pytype
+  - tiktoken
+  - typer
 ignorePaths:
   - "*-lock.*"
   - "*.lock"
@@ -11,6 +24,9 @@ dictionaries:
   - bash
   - cpp
   - cpp-refined
+  - dotnet
   - makefile
   - npm
+  - python
+  - python-common
 allowCompoundWords: true
