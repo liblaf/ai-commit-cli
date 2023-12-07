@@ -32,13 +32,13 @@ tasks:
 
   publish:
     cmds:
-      - poetry publish
+      - poetry publish --build
 
   setup:
     cmds:
-      - micromamba --yes --name="ai-commit-cli" create libpython-static python=3.11
+      - micromamba --yes --name="ai-commit-cli" create libpython-static python=3.12
       - micromamba --yes --name="ai-commit-cli" run poetry install
 
   test:
     cmds:
-      - pytest
+      - python -m pytest

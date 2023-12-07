@@ -3,22 +3,20 @@ name: Test
 on:
   push:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   test:
-    name: Build Executable
+    name: Test
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install Task
         uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
       - name: Install Poetry
         run: pipx install poetry
       - name: Setup Python
@@ -28,8 +26,8 @@ jobs:
           cache: poetry
       - name: Install Dependencies
         run: poetry install
-      - name: Build Executable
-        run: task test
+      - name: Run Tests
+        run: poetry run task test
     strategy:
       matrix:
         os:
