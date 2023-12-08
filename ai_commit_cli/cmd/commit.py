@@ -20,8 +20,8 @@ def main(
     diff_file: Annotated[
         Optional[pathlib.Path], typer.Option(exists=True, dir_okay=False)
     ] = None,
-    exclude: Annotated[Optional[list[str]], typer.Option()] = None,
-    include: Annotated[Optional[list[str]], typer.Option()] = None,
+    exclude: Annotated[Optional[list[str]], typer.Option("-e", "--exclude")] = None,
+    include: Annotated[Optional[list[str]], typer.Option("-i", "--include")] = None,
     pre_commit: Annotated[bool, typer.Option()] = True,
     prompt: Annotated[Optional[str], typer.Option()] = None,
     prompt_file: Annotated[
@@ -109,22 +109,7 @@ def main(
         {"role": "system", "content": prompt},
         {"role": "user", "content": diff},
     ]
-    try:
-        num_system_tokens: int = token.num_tokens_from_messages(
-            messages=[{"role": "system", "content": prompt}], model=model
-        )
-        num_user_tokens: int = token.num_tokens_from_messages(
-            messages=[{"role": "user", "content": diff}], model=model
-        )
-        num_tokens: int = num_system_tokens + num_user_tokens
-        logging.info(
-            "Number of Tokens: %d (System) + %d (User) = %d",
-            num_system_tokens,
-            num_user_tokens,
-            num_tokens,
-        )
-    except NotImplementedError as e:
-        logging.error(e)
+    logging.debug(messages)
     stream: openai.Stream[chat.ChatCompletionChunk] = client.chat.completions.create(
         messages=messages,
         model=model,
@@ -143,6 +128,32 @@ def main(
             else:
                 message += chunk.choices[0].delta.content
                 live_panel.update(markdown.Markdown(commit.sanitize(message)))
+    try:
+        num_tokens_prompt: int = token.num_tokens_from_string(prompt, model=model)
+        num_tokens_diff: int = token.num_tokens_from_string(diff, model=model)
+        num_tokens_input: int = token.num_tokens_from_messages(messages, model=model)
+        num_tokens_output: int = token.num_tokens_from_string(message, model=model)
+        pricing_input: float
+        pricing_output: float
+        pricing_input, pricing_output = token.pricing(model)
+        logging.info(
+            "Input Tokens: %d = %d (Prompt) + %d (Diff) + %d",
+            num_tokens_input,
+            num_tokens_prompt,
+            num_tokens_diff,
+            num_tokens_input - (num_tokens_prompt + num_tokens_diff),
+        )
+        logging.info("Output Tokens: %d", num_tokens_output)
+        pricing_input *= num_tokens_input
+        pricing_output *= num_tokens_output
+        logging.info(
+            "Pricing: $%f = $%f (Input) + $%f (Output)",
+            pricing_input + pricing_output,
+            pricing_input,
+            pricing_output,
+        )
+    except NotImplementedError as e:
+        logging.error(e)
     message = commit.sanitize(message)
     confirm: bool = questionary.confirm(
         message="Confirm the commit message?"
