@@ -43,11 +43,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install GNU Softwares
-        uses: liblaf/template/.github/actions/install@main
-        with:
-          brew: coreutils
-          choco: gnuwin32-coreutils.install
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
@@ -61,6 +56,11 @@ jobs:
           cache: poetry
       - name: Install Dependencies
         run: poetry install
+      - name: Install GNU Softwares
+        uses: liblaf/template/.github/actions/install@main
+        with:
+          brew: coreutils
+          choco: gnuwin32-coreutils.install
       - name: Build Executable
         run: poetry run task dist
       - name: Upload Artifacts
