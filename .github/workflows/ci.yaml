@@ -95,19 +95,17 @@ jobs:
         run: gh release --repo="${{ github.repository }}" delete dev --cleanup-tag
         env:
           GH_TOKEN: ${{ github.token }}
+        continue-on-error: true
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@master
-        with:
-          prerelease: true
-          files: artifacts/**/*
-          tag_name: dev
+        run: gh release --repo="${{ github.repository }}" create dev artifacts/**/* --generate-notes --prerelease
+        env:
+          GH_TOKEN: ${{ github.token }}
 
   check:
     name: Check
     needs:
       - build-pkg
       - build-exe
-      - upload
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -115,4 +113,3 @@ jobs:
         uses: re-actors/alls-green@release/v1
         with:
           jobs: ${{ toJSON(needs) }}
-          allowed-skips: upload

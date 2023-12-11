@@ -113,7 +113,7 @@ jobs:
       - name: Install Poetry
         run: pipx install poetry
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
@@ -142,8 +142,6 @@ jobs:
         with:
           path: artifacts
       - name: Upload Release Assets
-        uses: softprops/action-gh-release@master
-        with:
-          prerelease: true
-          files: artifacts/**/*
-          tag_name: ${{ needs.release.outputs.tag }}
+        run: gh release --repo="${{ github.repository }}" upload "${{ needs.release.outputs.tag }}" artifacts/**/* --clobber
+        env:
+          GH_TOKEN: ${{ github.token }}
