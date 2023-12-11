@@ -101,3 +101,18 @@ jobs:
           prerelease: true
           files: artifacts/**/*
           tag_name: dev
+
+  check:
+    name: Check
+    needs:
+      - build-pkg
+      - build-exe
+      - upload
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
+          allowed-skips: upload
