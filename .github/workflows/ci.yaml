@@ -10,6 +10,38 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
+      - name: Install Poetry
+        run: pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: poetry
+      - name: Install Dependencies
+        run: poetry install
+      - name: Run Tests
+        run: poetry run task test
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        python-version:
+          - "3.10"
+          - "3.11"
+          - "3.12"
+
   build-pkg:
     name: Build Package
     runs-on: ubuntu-latest
@@ -104,6 +136,7 @@ jobs:
   check:
     name: Check
     needs:
+      - test
       - build-pkg
       - build-exe
     if: always()
