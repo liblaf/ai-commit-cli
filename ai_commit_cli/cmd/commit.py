@@ -34,17 +34,7 @@ def main(
             help="ID of the model to use. See the model endpoint compatibility table "
             "for details on which models work with the Chat API."
         ),
-    ] = "gpt-3.5-turbo-16k",
-    frequency_penalty: Annotated[
-        float,
-        typer.Option(
-            help="Number between -2.0 and 2.0. Positive values penalize new tokens "
-            "based on their existing frequency in the text so far, decreasing the "
-            "model's likelihood to repeat the same line verbatim.",
-            min=-2.0,
-            max=2.0,
-        ),
-    ] = 0.0,
+    ] = "gpt-3.5-turbo-1106",
     max_tokens: Annotated[
         int,
         typer.Option(
@@ -52,16 +42,6 @@ def main(
             help="The maximum number of tokens to generate in the chat completion.",
         ),
     ] = 500,
-    presence_penalty: Annotated[
-        float,
-        typer.Option(
-            help="Number between -2.0 and 2.0. Positive values penalize new tokens "
-            "based on whether they appear in the text so far, increasing the model's "
-            "likelihood to talk about new topics.",
-            min=-2.0,
-            max=2.0,
-        ),
-    ] = 0.0,
     temperature: Annotated[
         float,
         typer.Option(
@@ -72,21 +52,12 @@ def main(
             max=2.0,
         ),
     ] = 0.0,
-    top_p: Annotated[
-        float,
-        typer.Option(
-            help="An alternative to sampling with temperature, called nucleus "
-            "sampling, where the model considers the results of the tokens with top_p "
-            "probability mass. So 0.1 means only the tokens comprising the top 10% "
-            "probability mass are considered."
-        ),
-    ] = 0.1,
 ) -> None:
     if api_key is None:
         api_key = bitwarden.get_notes("OPENAI_API_KEY")
-    if exclude is None:
+    if not exclude:
         exclude = ["*-lock.*", "*.lock"]
-    if include is None:
+    if not include:
         include = []
     if prompt is None:
         if prompt_file is None:
@@ -114,11 +85,8 @@ def main(
         messages=messages,
         model=model,
         stream=True,
-        frequency_penalty=frequency_penalty,
         max_tokens=max_tokens,
-        presence_penalty=presence_penalty,
         temperature=temperature,
-        top_p=top_p,
     )
     message: str = ""
     with live.Live() as live_panel:
@@ -132,10 +100,6 @@ def main(
         num_tokens_prompt: int = token.num_tokens_from_string(prompt, model=model)
         num_tokens_diff: int = token.num_tokens_from_string(diff, model=model)
         num_tokens_input: int = token.num_tokens_from_messages(messages, model=model)
-        num_tokens_output: int = token.num_tokens_from_string(message, model=model)
-        pricing_input: float
-        pricing_output: float
-        pricing_input, pricing_output = token.pricing(model)
         logging.info(
             "Input Tokens: %d = %d (Prompt) + %d (Diff) + %d",
             num_tokens_input,
@@ -143,7 +107,11 @@ def main(
             num_tokens_diff,
             num_tokens_input - (num_tokens_prompt + num_tokens_diff),
         )
+        num_tokens_output: int = token.num_tokens_from_string(message, model=model)
         logging.info("Output Tokens: %d", num_tokens_output)
+        pricing_input: float
+        pricing_output: float
+        pricing_input, pricing_output = token.pricing(model)
         pricing_input *= num_tokens_input
         pricing_output *= num_tokens_output
         logging.info(

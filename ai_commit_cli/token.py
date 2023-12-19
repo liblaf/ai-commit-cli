@@ -5,20 +5,8 @@ import tiktoken
 from openai.types import chat
 
 
-def pricing(model: str = "gpt-3.5-turbo-16k") -> tuple[float, float]:
-    if model.startswith("gpt-4-1106-preview"):
-        return 0.01 / 1e3, 0.03 / 1e3
-    elif model.startswith("gpt-4-32k"):
-        return 0.06 / 1e3, 0.12 / 1e3
-    elif model.startswith("gpt-4"):
-        return 0.03 / 1e3, 0.06 / 1e3
-    elif model.startswith("gpt-3.5"):
-        return 0.0010 / 1e3, 0.0020 / 1e3
-    raise NotImplementedError(f"price() is not implemented for model {model}.")
-
-
 # https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
-def num_tokens_from_string(string: str, model: str = "gpt-3.5-turbo-16k") -> int:
+def num_tokens_from_string(string: str, model: str = "gpt-3.5-turbo") -> int:
     """Returns the number of tokens in a text string."""
     encoding: tiktoken.Encoding
     try:
@@ -32,8 +20,7 @@ def num_tokens_from_string(string: str, model: str = "gpt-3.5-turbo-16k") -> int
 
 # https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
 def num_tokens_from_messages(
-    messages: Sequence[chat.ChatCompletionMessageParam],
-    model: str = "gpt-3.5-turbo-16k",
+    messages: Sequence[chat.ChatCompletionMessageParam], model: str = "gpt-3.5-turbo"
 ) -> int:
     """Return the number of tokens used by a list of messages."""
     encoding: tiktoken.Encoding
@@ -55,9 +42,8 @@ def num_tokens_from_messages(
         tokens_per_message = 3
         tokens_per_name = 1
     elif model == "gpt-3.5-turbo-0301":
-        tokens_per_message = (
-            4  # every message follows <|start|>{role/name}\n{content}<|end|>\n
-        )
+        # every message follows <|start|>{role/name}\n{content}<|end|>\n
+        tokens_per_message = 4
         tokens_per_name = -1  # if there's a name, the role is omitted
     elif "gpt-3.5-turbo" in model:
         logging.warning(
@@ -83,3 +69,16 @@ def num_tokens_from_messages(
                 num_tokens += tokens_per_name
     num_tokens += 3  # every reply is primed with <|start|>assistant<|message|>
     return num_tokens
+
+
+# https://openai.com/pricing
+def pricing(model: str = "gpt-3.5-turbo") -> tuple[float, float]:
+    if model.startswith("gpt-4-1106"):
+        return 0.01 / 1e3, 0.03 / 1e3
+    elif model.startswith("gpt-4-32k"):
+        return 0.06 / 1e3, 0.12 / 1e3
+    elif model.startswith("gpt-4"):
+        return 0.03 / 1e3, 0.06 / 1e3
+    elif model.startswith("gpt-3.5"):
+        return 0.0010 / 1e3, 0.0020 / 1e3
+    raise NotImplementedError(f"price() is not implemented for model {model}.")
