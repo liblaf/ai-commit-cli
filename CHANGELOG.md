@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.6.0](https://github.com/liblaf/ai-commit-cli/compare/v0.5.0...v0.6.0) (2023-12-20)
+
+
+### Features
+
+* **ci:** switch to using a single workflow for testing and checking ([e4bcfc2](https://github.com/liblaf/ai-commit-cli/commit/e4bcfc253aa01edb64b9f28f3c178ec1558d3452))
+* update default model to gpt-3.5-turbo-1106 ([9ba6c06](https://github.com/liblaf/ai-commit-cli/commit/9ba6c06ab73f04b3b5b97a65cb7eaa588e7e1e6c))
+
+
+### Bug Fixes
+
+* **commit:** fix options for exclude and include ([47fbe99](https://github.com/liblaf/ai-commit-cli/commit/47fbe99e90b9ab788b036375d8536ce5e8b5c7fa))
+
+
+### Documentation
+
+* create LICENSE ([#18](https://github.com/liblaf/ai-commit-cli/issues/18)) ([22f2b23](https://github.com/liblaf/ai-commit-cli/commit/22f2b23ecd4c150391b4d95f12d74617be8f8cf8))
+
 ## [0.5.0](https://github.com/liblaf/ai-commit-cli/compare/v0.4.0...v0.5.0) (2023-12-07)
 
 ### Features
