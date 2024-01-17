@@ -5,16 +5,15 @@ on:
     branches:
       - main
 
-permissions:
-  contents: write
-  pull-requests: write
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
     name: Create GitHub Release
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-latest
     outputs:
       created: ${{ steps.release.outputs.releases_created }}
@@ -130,6 +129,8 @@ jobs:
 
   upload:
     name: Upload Release Assets
+    permissions:
+      contents: write
     needs:
       - release
       - build-pkg
@@ -141,7 +142,8 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          merge-multiple: true
       - name: Upload Release Assets
-        run: gh release --repo="${{ github.repository }}" upload "${{ needs.release.outputs.tag }}" artifacts/**/* --clobber
+        run: gh release --repo="${{ github.repository }}" upload "${{ needs.release.outputs.tag }}" artifacts/* --clobber
         env:
           GH_TOKEN: ${{ github.token }}

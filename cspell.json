@@ -1,0 +1,36 @@
+{
+  "words": [
+    "choco",
+    "cython",
+    "dmypy",
+    "gomod",
+    "httpx",
+    "ipynb",
+    "liblaf",
+    "mkdocs",
+    "nointeraction",
+    "nuitka",
+    "pybuilder",
+    "pycache",
+    "pyflow",
+    "pyinstaller",
+    "pypa",
+    "pypackages",
+    "pytype",
+    "tiktoken",
+    "typer"
+  ],
+  "ignorePaths": ["*-lock.*", "*.lock", "cspell.json"],
+  "dictionaries": [
+    "bash",
+    "cpp",
+    "cpp-legacy",
+    "cpp-refined",
+    "dotnet",
+    "makefile",
+    "npm",
+    "python",
+    "python-common"
+  ],
+  "allowCompoundWords": true
+}

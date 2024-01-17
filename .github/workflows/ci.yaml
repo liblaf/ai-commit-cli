@@ -3,9 +3,6 @@ name: CI
 on:
   push:
 
-permissions:
-  contents: write
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
@@ -113,6 +110,8 @@ jobs:
 
   upload:
     name: Upload Release Assets
+    permissions:
+      contents: write
     needs:
       - build-pkg
       - build-exe
@@ -123,26 +122,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          merge-multiple: true
       - name: Delete Existing Release
         run: gh release --repo="${{ github.repository }}" delete dev --cleanup-tag
         env:
           GH_TOKEN: ${{ github.token }}
         continue-on-error: true
-      - name: Upload Release Assets
-        run: gh release --repo="${{ github.repository }}" create dev artifacts/**/* --generate-notes --prerelease
+      - name: Create GitHub Release
+        run: gh release --repo="${{ github.repository }}" create dev artifacts/* --generate-notes --prerelease
         env:
           GH_TOKEN: ${{ github.token }}
-
-  check:
-    name: Check
-    needs:
-      - test
-      - build-pkg
-      - build-exe
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check
-        uses: re-actors/alls-green@release/v1
-        with:
-          jobs: ${{ toJSON(needs) }}

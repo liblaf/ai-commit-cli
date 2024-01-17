@@ -13,6 +13,9 @@ def check(message: str) -> bool:
 
 
 def sanitize(message: str) -> str:
+    message = message.removeprefix("```")
+    message = message.removesuffix("```")
+    message = message.strip()
     lines: Sequence[str] = [sanitize_line(line) for line in message.splitlines()]
     return "\n".join(lines)
 
