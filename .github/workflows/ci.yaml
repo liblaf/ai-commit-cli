@@ -126,6 +126,5 @@ jobs:
         uses: liblaf/template/.github/actions/release@main
         with:
           tag: dev
-          files: |
-            *
+          files: "*"
           prerelease: true

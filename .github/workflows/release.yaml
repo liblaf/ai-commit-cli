@@ -87,7 +87,7 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ runner.os }}-${{ runner.arch }}
+          name: ${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}
           path: dist/*
     strategy:
       matrix:
@@ -141,9 +141,10 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
           merge-multiple: true
       - name: Upload Release Assets
-        run: gh release --repo="${{ github.repository }}" upload "${{ needs.release.outputs.tag }}" artifacts/* --clobber
+        run: |
+          sha256sum * > sha256sums.txt
+          gh release --repo "${{ github.repository }}" upload "${{ needs.release.outputs.tag }}" * --clobber
         env:
           GH_TOKEN: ${{ github.token }}

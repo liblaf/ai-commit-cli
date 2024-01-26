@@ -81,4 +81,4 @@ def pricing(model: str = "gpt-3.5-turbo") -> tuple[float, float]:
         return 0.03 / 1e3, 0.06 / 1e3
     elif model.startswith("gpt-3.5"):
         return 0.0010 / 1e3, 0.0020 / 1e3
-    raise NotImplementedError(f"price() is not implemented for model {model}.")
+    raise NotImplementedError(f"princing() is not implemented for model {model}.")
