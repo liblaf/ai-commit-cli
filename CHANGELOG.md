@@ -2,10 +2,9 @@
 
 ## [0.6.1](https://github.com/liblaf/ai-commit-cli/compare/v0.6.0...v0.6.1) (2024-01-26)
 
-
 ### Bug Fixes
 
-* fix sanitize function in __init__.py ([481cd94](https://github.com/liblaf/ai-commit-cli/commit/481cd940f2b16a5ff6783abbb9f323f7fa2c9fb3))
+- fix sanitize function in **init**.py ([481cd94](https://github.com/liblaf/ai-commit-cli/commit/481cd940f2b16a5ff6783abbb9f323f7fa2c9fb3))
 
 ## [0.6.0](https://github.com/liblaf/ai-commit-cli/compare/v0.5.0...v0.6.0) (2024-01-26)
 
