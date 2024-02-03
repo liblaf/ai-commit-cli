@@ -32,7 +32,3 @@ tasks:
     cmds:
       - micromamba --yes --name="ai-commit-cli" create libpython-static python=3.11
       - micromamba --yes --name="ai-commit-cli" run poetry install
-
-  test:
-    cmds:
-      - python -m pytest

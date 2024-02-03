@@ -1,4 +1,4 @@
-from ai_commit_cli.cmd import main
+from ai_commit_cli import app
 
 if __name__ == "__main__":
-    main.app()
+    app.app()

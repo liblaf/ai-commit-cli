@@ -7,16 +7,16 @@ PATTERN: re.Pattern[str] = re.compile(
 )
 
 
-def check(message: str) -> bool:
-    title_line: str = message.splitlines()[0]
+def check(msg: str) -> bool:
+    title_line: str = msg.splitlines()[0]
     return title_line == sanitize_line(title_line)
 
 
-def sanitize(message: str) -> str:
-    message = message.replace("```", "")
-    message = re.sub(r"\n\n\n+", "\n\n", message)
-    message = message.strip()
-    lines: Sequence[str] = [sanitize_line(line) for line in message.splitlines()]
+def sanitize(msg: str) -> str:
+    msg = msg.replace("```", "")
+    msg = re.sub(r"\n\n\n+", "\n\n", msg)
+    msg = msg.strip()
+    lines: Sequence[str] = [sanitize_line(line) for line in msg.splitlines()]
     return "\n".join(lines)
 
 
@@ -28,7 +28,7 @@ def sanitize_line(line: str) -> str:
     scope: Optional[str] = matches.group("scope")
     breaking: Optional[str] = matches.group("breaking")
     description: str = matches.group("description")
-    type_ = type_.strip()
+    type_ = type_.strip().lower()
     line = type_
     if scope is not None:
         scope = scope.strip().lower()
