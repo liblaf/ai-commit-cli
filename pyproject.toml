@@ -7,7 +7,7 @@ authors = ["liblaf <i@liblaf.me>"]
 description = "A CLI that writes your git commit messages for you with AI"
 name = "ai-commit-cli"
 readme = "README.md"
-version = "0.6.1"
+version = "0.7.0"
 
 [tool.poetry.dependencies]
 python = "^3.10"

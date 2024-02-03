@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.0](https://github.com/liblaf/ai-commit-cli/compare/v0.6.1...v0.7.0) (2024-02-03)
+
+
+### Features
+
+* initialize project structure and implement core functionality ([5bd4bfd](https://github.com/liblaf/ai-commit-cli/commit/5bd4bfd3b011a725e60ec099fd37d6f6919614a1))
+
+
+### Bug Fixes
+
+* **msg:** update the `sanitize` function in `msg.py` to properly remove code blocks ([5aa883e](https://github.com/liblaf/ai-commit-cli/commit/5aa883e265454ef68b2426edad0d2b394989c475))
+
 ## [0.6.1](https://github.com/liblaf/ai-commit-cli/compare/v0.6.0...v0.6.1) (2024-01-26)
 
 ### Bug Fixes
