@@ -13,7 +13,7 @@ def check(msg: str) -> bool:
 
 
 def sanitize(msg: str) -> str:
-    msg = msg.replace("```", "")
+    msg = re.sub(r"^```.*$", "", msg, flags=re.MULTILINE)
     msg = re.sub(r"\n\n\n+", "\n\n", msg)
     msg = msg.strip()
     lines: Sequence[str] = [sanitize_line(line) for line in msg.splitlines()]

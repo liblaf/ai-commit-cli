@@ -30,10 +30,9 @@ async def main_async(
 ) -> None:
     if pre_commit:
         await _pre_commit.run()
+    diff_str: str = await diff.content
     prompt = await prompt.ask()
-    completion_msg: Sequence[chat.ChatCompletionMessageParam] = prompt.make(
-        diff=await diff.content
-    )
+    completion_msg: Sequence[chat.ChatCompletionMessageParam] = prompt.make(diff_str)
     logger.debug(completion_msg)
     system_msg: chat.ChatCompletionSystemMessageParam = cast(
         chat.ChatCompletionSystemMessageParam, completion_msg[0]
