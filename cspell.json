@@ -37,6 +37,7 @@
     "golang",
     "makefile",
     "npm",
+    "powershell",
     "python",
     "python-common"
   ],
