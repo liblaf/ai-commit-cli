@@ -104,7 +104,7 @@ class Prompt:
         else:
             system_content += f" The type of change is `{self.type_}`."
         if self.scope is None:
-            system_content += """ Determine the scope of change (e.g. component of file name) based on the changes."""
+            system_content += " Determine the scope of change (e.g. component of file name) or omit the scope of change based on the changes."
         elif self.scope == "":
             system_content += " The scope of change is omitted."
         else:

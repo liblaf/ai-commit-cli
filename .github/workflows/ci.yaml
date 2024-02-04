@@ -13,15 +13,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Tools
+        uses: liblaf/template/.github/actions/install@main
+        with:
+          other: poetry task
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
-      - name: Install Tools
-        uses: liblaf/template/.github/actions/install@main
-        with:
-          other: poetry task
       - name: Install Dependencies
         run: poetry install
       - name: Build Package
@@ -42,15 +42,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Install Tools
+        uses: liblaf/template/.github/actions/install@main
+        with:
+          other: poetry task
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
-      - name: Install Tools
-        uses: liblaf/template/.github/actions/install@main
-        with:
-          other: poetry task
       - name: Install Dependencies
         run: poetry install
       - name: Build Executable
