@@ -69,6 +69,8 @@ jobs:
       - name: Install Tools
         uses: liblaf/template/.github/actions/install@main
         with:
+          brew: coreutils
+          choco: gnuwin32-coreutils.install
           other: poetry task
       - name: Setup Python
         uses: actions/setup-python@v5
