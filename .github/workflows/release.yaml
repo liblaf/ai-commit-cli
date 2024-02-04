@@ -41,14 +41,18 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
       - name: Install Dependencies
         run: poetry install
       - name: Build Package
-        run: poetry build
+        run: task build
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: package
+          name: pkg-py${{ matrix.python-version }}
           path: dist/*
     strategy:
       matrix:
@@ -64,10 +68,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Install Task
-        uses: arduino/setup-task@v1
-        with:
-          repo-token: ${{ github.token }}
       - name: Install Poetry
         run: pipx install poetry
       - name: Setup Python
@@ -75,6 +75,10 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
           cache: poetry
+      - name: Install Task
+        uses: arduino/setup-task@v1
+        with:
+          repo-token: ${{ github.token }}
       - name: Install Dependencies
         run: poetry install
       - name: Install GNU Softwares

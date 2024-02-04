@@ -8,6 +8,13 @@ tasks:
   build:
     cmds:
       - poetry build
+      - |
+        for file in dist/*; do
+          mv "$file" "${file//"-0.7.0"/}"
+        done
+    vars:
+      VERSION:
+        sh: poetry version --short
 
   clean:
     cmds:
