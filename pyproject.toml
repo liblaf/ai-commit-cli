@@ -10,7 +10,7 @@ readme = "README.md"
 version = "0.7.0"
 
 [tool.poetry.dependencies]
-httpx = { extras = ["socks"], version = "^0.26.0" }
+httpx = { extras = ["socks"], version = ">=0.26,<0.28" }
 loguru = "^0.7.2"
 openai = "^1.11.0"
 python = "^3.10"
