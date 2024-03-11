@@ -2,13 +2,12 @@
 
 ## [0.7.1](https://github.com/liblaf/ai-commit-cli/compare/v0.7.0...v0.7.1) (2024-03-11)
 
-
 ### Bug Fixes
 
-* **ai_commit_cli/prompt:** update prompt message for determining scope ([142871d](https://github.com/liblaf/ai-commit-cli/commit/142871d44d66ceae2c07f1697dcd6bb4e6610020))
-* **deps:** update dependency httpx to v0.27.0 ([11f9096](https://github.com/liblaf/ai-commit-cli/commit/11f90966a6593ca7d99f3f5cbcd15a3aa6019f49))
-* **deps:** update dependency openai to v1.13.3 ([18921a7](https://github.com/liblaf/ai-commit-cli/commit/18921a70dbc418ec75790672377d1c9993708333))
-* **deps:** update dependency rich to v13.7.1 ([db8833b](https://github.com/liblaf/ai-commit-cli/commit/db8833b858229380d0ff241b4c6d47f12c97dec6))
+- **ai_commit_cli/prompt:** update prompt message for determining scope ([142871d](https://github.com/liblaf/ai-commit-cli/commit/142871d44d66ceae2c07f1697dcd6bb4e6610020))
+- **deps:** update dependency httpx to v0.27.0 ([11f9096](https://github.com/liblaf/ai-commit-cli/commit/11f90966a6593ca7d99f3f5cbcd15a3aa6019f49))
+- **deps:** update dependency openai to v1.13.3 ([18921a7](https://github.com/liblaf/ai-commit-cli/commit/18921a70dbc418ec75790672377d1c9993708333))
+- **deps:** update dependency rich to v13.7.1 ([db8833b](https://github.com/liblaf/ai-commit-cli/commit/db8833b858229380d0ff241b4c6d47f12c97dec6))
 
 ## [0.7.0](https://github.com/liblaf/ai-commit-cli/compare/v0.6.1...v0.7.0) (2024-02-04)
 
