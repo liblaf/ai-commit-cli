@@ -12,6 +12,7 @@ import typer
 from loguru import logger
 
 from aic import log as _log
+from aic import message as _message
 from aic import prompt as _prompt
 from aic import provider as _provider
 from aic.cli import list_models as _list_models
@@ -48,7 +49,7 @@ async def _main(
     if stream:
         with rich.live.Live() as live:
             async for response in provider.generate_stream(prompt, truncate=truncate):
-                message = response.message
+                message = _message.sanitize(response.message)
                 markdown = rich.markdown.Markdown(message)
                 usage: list[str] = []
                 if response.usage_predict is not None:
@@ -69,7 +70,7 @@ async def _main(
         response: _provider.Response = await provider.generate(
             prompt, truncate=truncate
         )
-        message = response.message
+        message = _message.sanitize(response.message)
         if response.usage_predict is not None:
             if (tokens := response.usage_predict.pretty_tokens()) is not None:
                 logger.info("Tokens (Predict): {}", tokens)
