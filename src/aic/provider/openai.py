@@ -76,8 +76,10 @@ class OpenAI(_base.Provider):
         self, prompt: _prompt.Prompt, *, truncate: bool = True
     ) -> _base.Response:
         model: str = self.select_model(prompt)
+        logger.debug(prompt.messages)
         if truncate:
             prompt = self.truncate(model, prompt)
+            logger.debug(prompt.messages)
         response: openai.types.chat.ChatCompletion = (
             await self.client.chat.completions.create(
                 messages=prompt.messages,
@@ -109,8 +111,10 @@ class OpenAI(_base.Provider):
         self, prompt: _prompt.Prompt, *, truncate: bool = True
     ) -> AsyncGenerator[_base.Response, None]:
         model: str = self.select_model(prompt)
+        logger.debug(prompt.messages)
         if truncate:
             prompt = self.truncate(model, prompt)
+            logger.debug(prompt.messages)
         response: openai.AsyncStream[
             openai.types.chat.ChatCompletionChunk
         ] = await self.client.chat.completions.create(
