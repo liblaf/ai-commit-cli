@@ -27,7 +27,8 @@ class Prompt(abc.ABC):
             pathspec = [*pathspec, ":!.cspell.json", ":!*-lock.*", ":!*.lock"]
             self._diff = await _git.diff(pathspec)
 
-    async def ask(self) -> None: ...
+    async def ask(self) -> None:
+        ...
 
     @property
     @abc.abstractmethod
