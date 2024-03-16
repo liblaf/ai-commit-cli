@@ -17,9 +17,6 @@ async def get_notes(id: str) -> str:
     returncode: int = await proc.wait()
     if returncode != 0:
         raise subprocess.CalledProcessError(
-            returncode=returncode,
-            cmd=args,
-            output=output,
-            stderr=await proc.stderr.read() if proc.stderr is not None else None,
+            returncode=returncode, cmd=args, output=output
         )
     return output
