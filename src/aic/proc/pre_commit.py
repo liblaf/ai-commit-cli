@@ -12,9 +12,4 @@ async def run() -> None:
     proc: asp.Process = await asyncio.create_subprocess_exec(*args, stdin=asp.DEVNULL)
     returncode: int = await proc.wait()
     if returncode != 0:
-        raise subprocess.CalledProcessError(
-            returncode=returncode,
-            cmd=args,
-            output=await proc.stdout.read() if proc.stdout is not None else None,
-            stderr=await proc.stderr.read() if proc.stderr is not None else None,
-        )
+        raise subprocess.CalledProcessError(returncode=returncode, cmd=args)

@@ -1,31 +1,37 @@
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core"]
+build-backend = "hatchling.build"
+requires = ["hatchling"]
 
-[tool.poetry]
-authors = ["liblaf <i@liblaf.me>"]
+[project]
+authors = [
+  { email = "30631553+liblaf@users.noreply.github.com", name = "liblaf" },
+]
+dependencies = [
+  "babel>=2.14.0",
+  "httpx[socks]>=0.27.0",
+  "loguru>=0.7.2",
+  "openai>=1.14.0",
+  "questionary>=2.0.1",
+  "rich>=13.7.1",
+  "tiktoken>=0.6.0",
+  "typer[all]>=0.9.0",
+]
 description = "A CLI that writes your git commit messages for you with AI"
+license = { text = "MIT" }
 name = "ai-commit-cli"
 readme = "README.md"
+requires-python = ">= 3.10"
 version = "0.7.0"
 
-[tool.poetry.dependencies]
-httpx = { extras = ["socks"], version = "^0.27.0" }
-loguru = "^0.7.2"
-openai = "^1.11.0"
-python = "^3.10"
-questionary = "^2.0.1"
-rich = "^13.7.0"
-tiktoken = ">=0.5.2,<0.7.0"
-typer = "^0.9.0"
+[project.scripts]
+"aic" = "aic.cli.main:app"
 
-[tool.poetry.group.dev.dependencies]
-icecream = "^2.1.3"
-nuitka = "^2.0.1"
-pyinstaller = { python = ">=3.10,<3.13", version = "^6.3.0" }
+[tool.hatch.build.targets.wheel]
+packages = ["src/aic"]
 
-[tool.poetry.scripts]
-aic = "ai_commit_cli.app:app"
+[tool.hatch.metadata]
+allow-direct-references = true
 
-[tool.ruff.lint]
-select = ["B", "E", "F", "I", "SIM", "UP"]
+[tool.rye]
+dev-dependencies = ["icecream>=2.1.3"]
+managed = true
