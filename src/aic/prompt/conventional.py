@@ -130,7 +130,9 @@ Follow the user's instructions carefully, don't repeat yourself, don't include t
                 content += f"  - {t}: {t.description}\n"
             pass
         else:
-            content += f"- The type of change is `{self.type_}`.\n"
+            content += (
+                f"- The type of change is `{self.type_}`: {self.type_.description}.\n"
+            )
 
         if self.scope is None:
             content += "- Determine the scope of change (e.g. component of file name) or omit the scope of change based on the changes.\n"
