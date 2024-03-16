@@ -136,7 +136,7 @@ Follow the user's instructions carefully, don't repeat yourself, don't include t
             content += "- Determine the scope of change (e.g. component of file name) or omit the scope of change based on the changes.\n"
             pass
         elif self.scope == "":
-            content += "- The scope of change is omitted.\n"
+            content += "- Do not add scope of change in commit message.\n"
         else:
             content += f"- The scope of change is `{self.scope}`.\n"
 
@@ -147,13 +147,13 @@ Follow the user's instructions carefully, don't repeat yourself, don't include t
         elif self.breaking:
             content += "- There are breaking changes.\n"
         else:
-            content += "- There are no breaking changes.\n"
+            content += "- Do not add breaking changes in commit message.\n"
 
         if self.issue is None:
             content += "- Determine if this change affect any open issues based on the changes.\n"
             pass
         elif self.issue == "":
-            content += "- This change does not affect any open issues.\n"
+            content += "- Do not add issue references in commit message.\n"
         else:
             content += f"- Add issue references: `{self.issue}`.\n"
         return content
