@@ -70,8 +70,7 @@ class Provider(abc.ABC):
         if models is not None:
             self.models = models
 
-    async def list_models(self) -> AsyncGenerator[Model, None]:
-        ...
+    async def list_models(self) -> AsyncGenerator[Model, None]: ...
 
     async def quota(self) -> tuple[float, str] | None:
         return None
@@ -85,8 +84,7 @@ class Provider(abc.ABC):
     @abc.abstractmethod
     async def generate(
         self, prompt: _prompt.Prompt, *, truncate: bool = True
-    ) -> Response:
-        ...
+    ) -> Response: ...
 
     async def generate_stream(
         self, prompt: _prompt.Prompt, *, truncate: bool = True
@@ -120,9 +118,7 @@ class Provider(abc.ABC):
         return self.models[0]
 
     @abc.abstractmethod
-    def count_tokens(self, model: str, prompt: _prompt.Prompt) -> int:
-        ...
+    def count_tokens(self, model: str, prompt: _prompt.Prompt) -> int: ...
 
     @abc.abstractmethod
-    def truncate(self, model: str, prompt: _prompt.Prompt) -> _prompt.Prompt:
-        ...
+    def truncate(self, model: str, prompt: _prompt.Prompt) -> _prompt.Prompt: ...
