@@ -174,7 +174,7 @@ class OpenAI(_base.Provider):
             logger.warning("model not found. Using cl100k_base encoding.")
             encoding = tiktoken.get_encoding("cl100k_base")
         tokens: list[int] = encoding.encode(prompt.diff)
-        tokens_truncated: list[int] = tokens[: num_tokens - context_window]
+        tokens_truncated: list[int] = tokens[: context_window - num_tokens]
         prompt.diff = encoding.decode(tokens_truncated)
         logger.warning(
             "Truncated diff from {} to {} tokens", len(tokens), len(tokens_truncated)
