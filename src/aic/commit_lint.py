@@ -8,6 +8,7 @@ PATTERN: re.Pattern[str] = re.compile(
 
 
 def sanitize(msg: str) -> str:
+    msg = msg.strip()
     msg = msg.removeprefix("<Answer>").removesuffix("</Answer>")
     msg = msg.strip()
     lines: Sequence[str] = [sanitize_line(line) for line in msg.splitlines()]
