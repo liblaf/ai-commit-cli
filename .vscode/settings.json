@@ -2,10 +2,5 @@
   "files.exclude": {
     "**/__pycache__": true,
     "**/.venv": true
-  },
-  "python.analysis.diagnosticMode": "workspace",
-  "python.analysis.diagnosticSeverityOverrides": {
-    "reportMissingTypeStubs": "none"
-  },
-  "python.analysis.typeCheckingMode": "strict"
+  }
 }

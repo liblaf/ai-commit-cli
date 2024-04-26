@@ -1,134 +1,82 @@
-import asyncio
-import os
-import pathlib
-from collections.abc import Sequence
-from typing import Annotated, Optional
+import openai
+from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
+from rich.console import Group
+from rich.live import Live
+from rich.markdown import Markdown
+from rich.panel import Panel
 
-import rich.console
-import rich.live
-import rich.markdown
-import rich.text
-import typer
-from loguru import logger
-
-from aic import log as _log
-from aic import message as _message
+from aic import commit_lint as _lint
+from aic import git as _git
+from aic import pretty as _pretty
 from aic import prompt as _prompt
-from aic import provider as _provider
-from aic.cli import list_models as _list_models
-from aic.cli import quota as _quota
-from aic.proc import git as _git
-
-app = typer.Typer(name="aic", add_completion=False)
+from aic import token as _token
+from aic.api import openrouter as _openrouter
 
 
-async def _main(
-    *,
-    pathspec: Sequence[str] | None = None,
-    diff_file: pathlib.Path | None = None,
-    models: list[str] | None = None,
-    provider: _provider.Provider,
-    prompt: _prompt.Prompt,
-    dry_run: bool = False,
-    list_models: bool = False,
-    quota: bool = False,
-    stream: bool = True,
-    truncate: bool = True,
-    verify: bool = True,
-) -> None:
-    await provider.init(models)
-    if list_models:
-        await _list_models.list_models(provider)
-        return
-    if quota:
-        await _quota.quota(provider)
-        return
-    await prompt.init(pathspec, diff_file=diff_file)
-    await prompt.ask()
-    message: str = ""
-    if stream:
-        with rich.live.Live() as live:
-            async for response in provider.generate_stream(prompt, truncate=truncate):
-                message = _message.sanitize(response.message)
-                markdown = rich.markdown.Markdown(message)
-                usage: list[str] = []
-                if response.usage_predict is not None:
-                    if (tokens := response.usage_predict.pretty_tokens()) is not None:
-                        usage.append(f"Tokens (Predict): {tokens}")
-                    if (cost := response.usage_predict.pretty_cost()) is not None:
-                        usage.append(f"Cost (Predict): {cost}")
-                if response.usage_actual is not None:
-                    if (tokens := response.usage_actual.pretty_tokens()) is not None:
-                        usage.append(f"Tokens (Actual): {tokens}")
-                    if (cost := response.usage_actual.pretty_cost()) is not None:
-                        usage.append(f"Cost (Actual): {cost}")
-                group = rich.console.Group(
-                    markdown, rich.text.Text("; ".join(usage), style="bold cyan")
-                )
-                live.update(group)
-    else:
-        response: _provider.Response = await provider.generate(
-            prompt, truncate=truncate
-        )
-        message = _message.sanitize(response.message)
-        if response.usage_predict is not None:
-            if (tokens := response.usage_predict.pretty_tokens()) is not None:
-                logger.info("Tokens (Predict): {}", tokens)
-            if (cost := response.usage_predict.pretty_cost()) is not None:
-                logger.info("Cost (Predict): {}", cost)
-        if response.usage_actual is not None:
-            if (tokens := response.usage_actual.pretty_tokens()) is not None:
-                logger.info("Tokens (Actual): {}", tokens)
-            if (cost := response.usage_actual.pretty_cost()) is not None:
-                logger.info("Cost (Actual): {}", cost)
-    if dry_run:
-        print(message)
-    else:
-        await _git.commit(message, verify=verify)
-
-
-@app.command()
 def main(
-    pathspec: Annotated[Optional[list[str]], typer.Argument()] = None,
-    *,
-    api_key: Annotated[Optional[str], typer.Option(envvar="OPENAI_API_KEY")] = None,
-    base_url: Annotated[Optional[str], typer.Option(envvar="OPENAI_BASE_URL")] = None,
-    diff: Annotated[
-        Optional[pathlib.Path], typer.Option(exists=True, dir_okay=False)
-    ] = None,
-    models: Annotated[Optional[list[str]], typer.Option()] = None,
-    provider: Annotated[
-        _provider.ProviderEnum, typer.Option()
-    ] = _provider.ProviderEnum.OPENAI,
-    prompt: Annotated[
-        _prompt.PromptEnum, typer.Option()
-    ] = _prompt.PromptEnum.CONVENTIONAL,
-    dry_run: Annotated[bool, typer.Option()] = False,
-    list_models: Annotated[bool, typer.Option()] = False,
-    quota: Annotated[bool, typer.Option()] = False,
-    stream: Annotated[bool, typer.Option()] = True,
-    truncate: Annotated[bool, typer.Option()] = True,
-    verify: Annotated[bool, typer.Option()] = True,
+    *pathspec: str,
+    api_key: str | None,
+    base_url: str | None,
+    model: str,
+    max_tokens: int,
 ) -> None:
-    _log.init()
-    if pathspec is None:
-        pathspec = []
-    if api_key is not None:
-        os.environ["OPENAI_API_KEY"] = api_key
-    if base_url is not None:
-        os.environ["OPENAI_BASE_URL"] = base_url
-    asyncio.run(
-        _main(
-            pathspec=pathspec,
-            diff_file=diff,
-            models=models,
-            provider=provider.factory(),
-            prompt=prompt.factory(),
-            dry_run=dry_run,
-            list_models=list_models,
-            quota=quota,
-            stream=stream,
-            truncate=truncate,
-            verify=verify,
-        )
+    _git.status(*pathspec)
+    diff: str = _git.diff(*pathspec)
+    model_info: _openrouter.Model = _openrouter.get_model(f"openai/{model}")
+    client = openai.OpenAI(api_key=api_key, base_url=base_url)
+    prompt_builder = _prompt.Prompt()
+    prompt_builder.ask()
+    prompt: str = prompt_builder.build(diff, model_info, max_tokens)
+    messages: list[ChatCompletionMessageParam] = [{"role": "user", "content": prompt}]
+    prompt_tokens: int = _token.num_tokens_from_messages(messages, model)
+    response: openai.Stream[ChatCompletionChunk] = client.chat.completions.create(
+        messages=messages,
+        model=model,
+        max_tokens=max_tokens,
+        stream=True,
+        temperature=0.2,
+    )
+    completion: str = ""
+    with Live() as live:
+        for chunk in response:
+            content: str | None = chunk.choices[0].delta.content
+            if content is None:
+                completion += "\n"
+            else:
+                completion += content
+            completion_tokens: int = _token.num_tokens_from_string(completion, model)
+            live.update(
+                Group(
+                    Panel(Markdown(_lint.sanitize(completion))),
+                    Panel(
+                        format_tokens(prompt_tokens, completion_tokens)
+                        + "\n"
+                        + format_cost(
+                            prompt_tokens, completion_tokens, model_info.pricing
+                        )
+                    ),
+                )
+            )
+    _git.commit(_lint.sanitize(completion))
+
+
+def format_tokens(prompt_tokens: int, completion_tokens: int) -> str:
+    total_tokens: int = prompt_tokens + completion_tokens
+    return "Tokens: {} = {} (Prompt) + {} (Completion)".format(
+        _pretty.format_int(total_tokens),
+        _pretty.format_int(prompt_tokens),
+        _pretty.format_int(completion_tokens),
+    )
+
+
+def format_cost(
+    prompt_tokens: int, completion_tokens: int, pricing: _openrouter.Model.Pricing
+) -> str:
+    prompt_cost: float = prompt_tokens * pricing.prompt
+    completion_cost: float = completion_tokens * pricing.completion
+    total_cost: float = prompt_cost + completion_cost
+    return "Cost: {} = {} (Prompt) + {} (Completion)".format(
+        _pretty.format_currency(total_cost),
+        _pretty.format_currency(prompt_cost),
+        _pretty.format_currency(completion_cost),
     )

@@ -17,19 +17,15 @@ jobs:
       - name: Build Package
         run: |-
           source .venv/bin/activate
-          bash "scripts/dist.sh"
+          make dist
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: pkg-py${{ matrix.python-version }}
+          name: pkg
           path: dist/*
-    strategy:
-      matrix:
-        python-version:
-          - "3.11"
 
-  release:
-    name: Release
+  pre-release:
+    name: Pre-release
     permissions:
       contents: write
     needs:
@@ -40,14 +36,17 @@ jobs:
       group: ${{ github.workflow }}-${{ github.ref }}
       cancel-in-progress: true
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
+          path: dist
           merge-multiple: true
       - name: Create GitHub Release
         uses: liblaf/repo/.github/actions/release@main
         with:
           tag: dev
-          files: "*"
-          prerelease: true
+          files: dist/*
+          pre-release: true
           recreate: true

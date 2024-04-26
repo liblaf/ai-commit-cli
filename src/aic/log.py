@@ -26,8 +26,11 @@ class InterceptHandler(logging.Handler):
         )
 
 
-def init() -> None:
-    os.environ["LOGURU_LEVEL"] = os.getenv("LOGURU_LEVEL", "INFO")
-    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+def init(level: str | int = logging.NOTSET) -> None:
+    if level == logging.NOTSET:
+        level = os.getenv("LOG_LEVEL", logging.NOTSET)
+    if level == logging.NOTSET:
+        level = logging.INFO
     logger.remove()
-    logger.add(sys.stderr, level=os.environ["LOGURU_LEVEL"])
+    logger.add(sys.stderr, level=level)
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)

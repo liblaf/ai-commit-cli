@@ -7,14 +7,8 @@ PATTERN: re.Pattern[str] = re.compile(
 )
 
 
-def check(msg: str) -> bool:
-    title_line: str = msg.splitlines()[0]
-    return title_line == sanitize_line(title_line)
-
-
 def sanitize(msg: str) -> str:
-    msg = re.sub(r"^```.*$", "", msg, flags=re.MULTILINE)
-    msg = re.sub(r"\n\n\n+", "\n\n", msg)
+    msg = msg.removeprefix("<Answer>").removesuffix("</Answer>")
     msg = msg.strip()
     lines: Sequence[str] = [sanitize_line(line) for line in msg.splitlines()]
     return "\n".join(lines)
