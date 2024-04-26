@@ -8,6 +8,7 @@ def format_types() -> str:
     return result.strip()
 
 
+# https://docs.anthropic.com/claude/docs/helper-metaprompt-experimental
 # https://github.com/gitkraken/vscode-gitlens/blob/27e0658e277b060e06ae5d250f0afdf9a5d6e4b5/src/ai/openaiProvider.ts#L59-L67
 TEMPLATE: str = f"""\
 You are an advanced AI programming assistant tasked with summarizing code changes into a concise and meaningful commit message. Compose a commit message that:
