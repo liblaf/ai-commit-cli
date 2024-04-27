@@ -26,7 +26,7 @@ def main(
         return
     if pathspec is None:
         pathspec = []
-    pathspec += [":!*-lock.*", ":!*.lock", ":!*cspell*"]
+    pathspec += [":!*-lock.*", ":!*.lock*", ":!*cspell*"]
     config: _config.Config = _config.load()
     if api_key is None:
         api_key = config.api_key
