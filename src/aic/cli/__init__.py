@@ -19,6 +19,7 @@ def main(
     base_url: Annotated[Optional[str], typer.Option(envvar="OPENAI_BASE_URL")] = None,
     model: Annotated[str, typer.Option()] = "gpt-3.5-turbo",
     max_tokens: Annotated[int, typer.Option()] = 500,
+    verify: Annotated[bool, typer.Option()] = True,
 ) -> None:
     _log.init()
     if list_models:
@@ -36,4 +37,5 @@ def main(
         base_url=base_url,
         model=model,
         max_tokens=max_tokens,
+        verify=verify,
     )

@@ -11,10 +11,8 @@
     "pydantic",
     "pyproject",
     "pyright",
-    "shfmt",
     "taplo",
     "tiktoken",
-    "tmpl",
     "typer",
     "venv"
   ],

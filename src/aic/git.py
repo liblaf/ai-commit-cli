@@ -4,7 +4,7 @@ import typer
 from loguru import logger
 
 
-def commit(message: str, verify: bool = True) -> None:
+def commit(message: str, *, verify: bool = True) -> None:
     args: list[str] = [
         "git",
         "commit",

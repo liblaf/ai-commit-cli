@@ -19,6 +19,7 @@ def main(
     base_url: str | None,
     model: str,
     max_tokens: int,
+    verify: bool,
 ) -> None:
     _git.status(*pathspec)
     diff: str = _git.diff(*pathspec)
@@ -57,7 +58,7 @@ def main(
                     ),
                 )
             )
-    _git.commit(_lint.sanitize(completion))
+    _git.commit(_lint.sanitize(completion), verify=verify)
 
 
 def format_tokens(prompt_tokens: int, completion_tokens: int) -> str:
