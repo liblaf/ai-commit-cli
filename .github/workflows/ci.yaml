@@ -4,8 +4,28 @@ on:
   push:
 
 jobs:
+  release-please:
+    name: Release Please
+    permissions:
+      contents: write
+      pull-requests: write
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    outputs:
+      created: ${{ steps.release.outputs.releases_created }}
+      tag: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - id: release
+        name: Release Please
+        uses: google-github-actions/release-please-action@v4
+        with:
+          config-file: .github/release-please/config.json
+          manifest-file: .github/release-please/.manifest.json
+
   build:
-    name: Build Package
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,14 +35,12 @@ jobs:
       - name: Install Dependencies
         run: rye sync
       - name: Build Package
-        run: |-
-          source .venv/bin/activate
-          make dist
+        run: rye build
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: pkg
-          path: dist/*
+          name: dist
+          path: dist
 
   pre-release:
     name: Pre-release
@@ -41,8 +59,8 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
+          name: dist
           path: dist
-          merge-multiple: true
       - name: Create GitHub Release
         uses: liblaf/repo/.github/actions/release@main
         with:
@@ -50,3 +68,44 @@ jobs:
           files: dist/*
           pre-release: true
           recreate: true
+
+  publish:
+    name: Publish
+    permissions:
+      id-token: write
+    needs:
+      - release-please
+      - build
+    if: needs.release-please.outputs.created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  release:
+    name: Release
+    permissions:
+      contents: write
+    needs:
+      - release-please
+      - build
+    if: needs.release-please.outputs.created == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Create GitHub Release
+        uses: liblaf/repo/.github/actions/release@main
+        with:
+          tag: ${{ needs.release-please.outputs.tag }}
+          files: dist/*
