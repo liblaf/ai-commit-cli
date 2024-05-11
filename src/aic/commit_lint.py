@@ -1,6 +1,8 @@
 import re
-from collections.abc import Sequence
-from typing import Optional
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 PATTERN: re.Pattern[str] = re.compile(
     r"(?P<type>\w+)(?:\((?P<scope>[^\)]+)\))?(?P<breaking>!)?: (?P<description>.+)"
@@ -16,12 +18,12 @@ def sanitize(msg: str) -> str:
 
 
 def sanitize_line(line: str) -> str:
-    matches: Optional[re.Match[str]] = PATTERN.fullmatch(line)
+    matches: re.Match[str] | None = PATTERN.fullmatch(line)
     if matches is None:
         return line
     type_: str = matches.group("type")
-    scope: Optional[str] = matches.group("scope")
-    breaking: Optional[str] = matches.group("breaking")
+    scope: str | None = matches.group("scope")
+    breaking: str | None = matches.group("breaking")
     description: str = matches.group("description")
     type_ = type_.strip().lower()
     line = type_

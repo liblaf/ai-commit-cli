@@ -1,5 +1,6 @@
+from typing import TYPE_CHECKING
+
 import openai
-from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
 from rich.console import Group
 from rich.live import Live
 from rich.markdown import Markdown
@@ -11,6 +12,9 @@ from aic import pretty as _pretty
 from aic import prompt as _prompt
 from aic import token as _token
 from aic.api import openrouter as _openrouter
+
+if TYPE_CHECKING:
+    from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
 
 
 def main(
@@ -63,11 +67,10 @@ def main(
 
 def format_tokens(prompt_tokens: int, completion_tokens: int) -> str:
     total_tokens: int = prompt_tokens + completion_tokens
-    return "Tokens: {} = {} (Prompt) + {} (Completion)".format(
-        _pretty.format_int(total_tokens),
-        _pretty.format_int(prompt_tokens),
-        _pretty.format_int(completion_tokens),
-    )
+    total: str = _pretty.format_int(total_tokens)
+    prompt: str = _pretty.format_int(prompt_tokens)
+    completion: str = _pretty.format_int(completion_tokens)
+    return f"Tokens: {total} = {prompt} (Prompt) + {completion} (Completion)"
 
 
 def format_cost(
@@ -76,8 +79,7 @@ def format_cost(
     prompt_cost: float = prompt_tokens * pricing.prompt
     completion_cost: float = completion_tokens * pricing.completion
     total_cost: float = prompt_cost + completion_cost
-    return "Cost: {} = {} (Prompt) + {} (Completion)".format(
-        _pretty.format_currency(total_cost),
-        _pretty.format_currency(prompt_cost),
-        _pretty.format_currency(completion_cost),
-    )
+    total: str = _pretty.format_currency(total_cost)
+    prompt: str = _pretty.format_currency(prompt_cost)
+    completion: str = _pretty.format_currency(completion_cost)
+    return f"Cost: {total} = {prompt} (Prompt) + {completion} (Completion)"

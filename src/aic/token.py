@@ -9,7 +9,8 @@ from openai.types.chat import ChatCompletionMessageParam
 def num_tokens_from_string(string: str, model: str) -> int:
     """Returns the number of tokens in a text string.
 
-    https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken"""
+    https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken
+    """
     encoding: tiktoken.Encoding = tiktoken.encoding_for_model(model)
     num_tokens: int = len(encoding.encode(string))
     return num_tokens

@@ -1,7 +1,7 @@
 import pathlib
+import tomllib
 
 import pydantic
-import tomllib
 import typer
 
 
@@ -14,6 +14,5 @@ def load() -> Config:
     config_file: pathlib.Path = app_dir / "config.toml"
     if config_file.exists():
         with config_file.open("rb") as fp:
-            config = Config(**tomllib.load(fp))
-            return config
+            return Config(**tomllib.load(fp))
     return Config()

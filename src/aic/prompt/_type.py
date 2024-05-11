@@ -1,8 +1,9 @@
+# ruff: noqa: E501
 import enum
 
 
 class CommitType(enum.StrEnum):
-    """https://github.com/commitizen/conventional-commit-types/blob/master/index.json"""
+    """https://github.com/commitizen/conventional-commit-types/blob/master/index.json."""
 
     FEAT = "feat"
     FIX = "fix"

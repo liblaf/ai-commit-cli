@@ -1,12 +1,14 @@
-NAME := aic
+default: check format toml-sort
 
-default: fmt
+check:
+	- ruff check
 
-dist:
-	rye build --clean
+format:
+	ruff format
 
-fmt: fmt-toml/pyproject.toml
+toml-sort: toml-sort\:pyproject.toml
+toml-sort: toml-sort\:ruff.toml
 
-fmt-toml/%:
-	toml-sort --in-place --all "$*"
-	taplo format "$*"
+toml-sort\:%: %
+	toml-sort --in-place --all "$<"
+	taplo format "$<"

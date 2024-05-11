@@ -13,7 +13,7 @@ def commit(message: str, *, verify: bool = True) -> None:
         "--verify" if verify else "--no-verify",
     ]
     logger.debug(args)
-    proc: subprocess.CompletedProcess[bytes] = subprocess.run(args)
+    proc: subprocess.CompletedProcess[bytes] = subprocess.run(args, check=False)
     if proc.returncode != 0:
         raise typer.Exit(proc.returncode)
 

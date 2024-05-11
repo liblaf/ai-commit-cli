@@ -63,8 +63,7 @@ class Prompt:
             ).unsafe_ask()
         except KeyboardInterrupt:
             self.breaking_change = None
-        finally:
-            return self.breaking_change
+        return self.breaking_change
 
     def build(self, diff: str, model: _openrouter.Model, max_tokens: int) -> str:
         _: Any

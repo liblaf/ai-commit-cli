@@ -32,9 +32,10 @@ def get_models() -> list[Model]:
 
 
 @functools.lru_cache
-def get_model(id: str) -> Model:
+def get_model(model_id: str) -> Model:
     models: list[Model] = get_models()
     for model in models:
-        if model.id == id:
+        if model.id == model_id:
             return model
-    raise ValueError(f"Model not found: {id}")
+    msg: str = f"Model not found: {id}"
+    raise ValueError(msg)

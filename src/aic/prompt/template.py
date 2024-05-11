@@ -1,3 +1,4 @@
+# ruff: noqa: E501
 from aic.prompt import _type
 
 

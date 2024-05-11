@@ -1,0 +1,40 @@
+fix = true
+show-fixes = true
+target-version = "py311"
+
+[format]
+docstring-code-format = true
+
+[lint]
+ignore = [
+  "ANN101",
+  "ANN102",
+  "ANN401",
+  "ARG002",
+  "BLE001",
+  "COM812",
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "D105",
+  "D106",
+  "D107",
+  "FIX002",
+  "S101",
+  "S603",
+  "S607",
+  "T201",
+  "TD002",
+  "TD003",
+  "TD004",
+  "TD005",
+]
+select = ["ALL"]
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.pylint]
+max-args = 7
