@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Optional
 
 import typer
 
@@ -12,11 +12,11 @@ app = typer.Typer(name="aic")
 
 @app.command()
 def main(
-    pathspec: Annotated[list[str] | None, typer.Argument()] = None,
+    pathspec: Annotated[Optional[list[str]], typer.Argument()] = None,  # noqa: UP007
     *,
     list_models: Annotated[bool, typer.Option()] = False,
-    api_key: Annotated[str | None, typer.Option(envvar="OPENAI_API_KEY")] = None,
-    base_url: Annotated[str | None, typer.Option(envvar="OPENAI_BASE_URL")] = None,
+    api_key: Annotated[Optional[str], typer.Option(envvar="OPENAI_API_KEY")] = None,  # noqa: UP007
+    base_url: Annotated[Optional[str], typer.Option(envvar="OPENAI_BASE_URL")] = None,  # noqa: UP007
     model: Annotated[str, typer.Option()] = "gpt-3.5-turbo",
     max_tokens: Annotated[int, typer.Option()] = 500,
     verify: Annotated[bool, typer.Option()] = True,
