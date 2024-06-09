@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.1](https://github.com/liblaf/ai-commit-cli/compare/v0.8.0...v0.8.1) (2024-06-09)
+
+### 🐛 Bug Fixes
+
+- **api:** update model not found error message ([15becbb](https://github.com/liblaf/ai-commit-cli/commit/15becbb76516d1d77ec8f8fe5defbab7b92e73c0))
+- update optional type annotations for pathspec, api_key, and base_url ([ff63961](https://github.com/liblaf/ai-commit-cli/commit/ff639617e133e6a0b2427e3c2220fcf70babada8))
+
+### 🏗 Miscellaneous Chores
+
+- **deps:** update python docker tag to v3.12.4 ([a29e127](https://github.com/liblaf/ai-commit-cli/commit/a29e12727a6d627415d77780ea22ff0b90c4dda3))
+
+### 💻 Continuous Integration
+
+- **repo:** sync with repo template ([730d778](https://github.com/liblaf/ai-commit-cli/commit/730d778c94009e0b8242ade78fbf600a39bf8e92))
+- **repo:** sync with repo template ([62141f9](https://github.com/liblaf/ai-commit-cli/commit/62141f999ff04a6a7625dcbda2be1ea9b6f774d8))
+- **repo:** sync with repo template ([743c1c6](https://github.com/liblaf/ai-commit-cli/commit/743c1c675fd239ee1ae4bf75f0af4b6dd672e3a4))
+- **repo:** sync with repo template ([c92d3fb](https://github.com/liblaf/ai-commit-cli/commit/c92d3fb1594be167e752942016b57922ff798051))
+
 ## [0.8.0](https://github.com/liblaf/ai-commit-cli/compare/v0.7.0...v0.8.0) (2024-05-11)
 
 ### ✨ Features
