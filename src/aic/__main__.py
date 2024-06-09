@@ -1,3 +1,3 @@
-from aic import cli as _cli
+from aic import cli
 
-_cli.app()
+cli.app()

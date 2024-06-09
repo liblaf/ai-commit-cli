@@ -17,8 +17,8 @@ def main(
     list_models: Annotated[bool, typer.Option()] = False,
     api_key: Annotated[Optional[str], typer.Option(envvar="OPENAI_API_KEY")] = None,  # noqa: UP007
     base_url: Annotated[Optional[str], typer.Option(envvar="OPENAI_BASE_URL")] = None,  # noqa: UP007
-    model: Annotated[str, typer.Option()] = "gpt-3.5-turbo",
-    max_tokens: Annotated[int, typer.Option()] = 500,
+    model: Annotated[Optional[str], typer.Option()] = None,  # noqa: UP007
+    max_tokens: Annotated[Optional[int], typer.Option()] = None,  # noqa: UP007
     verify: Annotated[bool, typer.Option()] = True,
 ) -> None:
     _log.init()
@@ -29,13 +29,16 @@ def main(
         pathspec = []
     pathspec += [":!*-lock.*", ":!*.lock*", ":!*cspell*"]
     config: _config.Config = _config.load()
-    if api_key is None:
-        api_key = config.api_key
+    if api_key is not None:
+        config.api_key = api_key
+    if base_url is not None:
+        config.base_url = base_url
+    if model is not None:
+        config.model = model
+    if max_tokens is not None:
+        config.max_tokens = max_tokens
     _main.main(
         *pathspec,
-        api_key=api_key,
-        base_url=base_url,
-        model=model,
-        max_tokens=max_tokens,
+        config=config,
         verify=verify,
     )

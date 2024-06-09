@@ -37,5 +37,7 @@ def get_model(model_id: str) -> Model:
     for model in models:
         if model.id == model_id:
             return model
-    msg: str = f"Model not found: {id}"
+        if model.id.split("/")[-1] == model_id:
+            return model
+    msg: str = f"Model not found: {model_id}"
     raise ValueError(msg)

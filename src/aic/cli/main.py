@@ -7,6 +7,7 @@ from rich.markdown import Markdown
 from rich.panel import Panel
 
 from aic import commit_lint as _lint
+from aic import config as _config
 from aic import git as _git
 from aic import pretty as _pretty
 from aic import prompt as _prompt
@@ -17,27 +18,20 @@ if TYPE_CHECKING:
     from openai.types.chat import ChatCompletionChunk, ChatCompletionMessageParam
 
 
-def main(
-    *pathspec: str,
-    api_key: str | None,
-    base_url: str | None,
-    model: str,
-    max_tokens: int,
-    verify: bool,
-) -> None:
+def main(*pathspec: str, config: _config.Config, verify: bool) -> None:
     _git.status(*pathspec)
     diff: str = _git.diff(*pathspec)
-    model_info: _openrouter.Model = _openrouter.get_model(f"openai/{model}")
-    client = openai.OpenAI(api_key=api_key, base_url=base_url)
+    model_info: _openrouter.Model = _openrouter.get_model(config.model)
+    client = openai.OpenAI(api_key=config.api_key, base_url=config.base_url)
     prompt_builder = _prompt.Prompt()
     prompt_builder.ask()
-    prompt: str = prompt_builder.build(diff, model_info, max_tokens)
+    prompt: str = prompt_builder.build(diff, model_info, config.max_tokens)
     messages: list[ChatCompletionMessageParam] = [{"role": "user", "content": prompt}]
-    prompt_tokens: int = _token.num_tokens_from_messages(messages, model)
+    prompt_tokens: int = _token.num_tokens_from_messages(messages, config.model)
     response: openai.Stream[ChatCompletionChunk] = client.chat.completions.create(
         messages=messages,
-        model=model,
-        max_tokens=max_tokens,
+        model=config.model,
+        max_tokens=config.max_tokens,
         stream=True,
         temperature=0.2,
     )
@@ -49,7 +43,9 @@ def main(
                 completion += "\n"
             else:
                 completion += content
-            completion_tokens: int = _token.num_tokens_from_string(completion, model)
+            completion_tokens: int = _token.num_tokens_from_string(
+                completion, config.model
+            )
             live.update(
                 Group(
                     Panel(Markdown(_lint.sanitize(completion))),
