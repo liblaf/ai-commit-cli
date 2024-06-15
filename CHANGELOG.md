@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.8.2](https://github.com/liblaf/ai-commit-cli/compare/v0.8.1...v0.8.2) (2024-06-15)
+
+### 🐛 Bug Fixes
+
+- update release-please config and refactor CLI imports ([4d0d878](https://github.com/liblaf/ai-commit-cli/commit/4d0d878ff70cb6e4f3bb76595df3ed01d711d316))
+
 ## [0.8.1](https://github.com/liblaf/ai-commit-cli/compare/v0.8.0...v0.8.1) (2024-06-09)
 
 ### 🐛 Bug Fixes
