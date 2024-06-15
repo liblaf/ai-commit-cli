@@ -1,17 +1,19 @@
 {
-  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "$schema": "https://github.com/googleapis/release-please/raw/main/schemas/config.json",
   "changelog-sections": [
     { "type": "feat", "section": "✨ Features" },
     { "type": "fix", "section": "🐛 Bug Fixes" },
-    { "type": "perf", "section": "🚀 Performance Improvements" },
-    { "type": "revert", "section": "🔙 Reverts" },
-    { "type": "docs", "section": "📚 Documentation" },
-    { "type": "style", "section": "🎨 Styles" },
-    { "type": "chore", "section": "🏗 Miscellaneous Chores" },
-    { "type": "refactor", "section": "♻️ Code Refactoring" },
-    { "type": "test", "section": "🚦 Tests" },
-    { "type": "build", "section": "📦 Build System" },
-    { "type": "ci", "section": "💻 Continuous Integration" }
+    { "type": "perf", "section": "⚡️ Performance Improvements" },
+    { "type": "revert", "section": "⏪ Reverts" },
+    { "type": "docs", "section": "📝 Documentation" },
+    { "type": "fix", "scope": "deps", "section": "⬆️ Dependencies" },
+    { "type": "chore", "scope": "deps", "section": "⬆️ Dependencies" },
+    { "type": "style", "section": "🎨 Styles", "hidden": true },
+    { "type": "chore", "section": "🏗 Miscellaneous Chores", "hidden": true },
+    { "type": "refactor", "section": "♻️ Code Refactoring", "hidden": true },
+    { "type": "test", "section": "🚦 Tests", "hidden": true },
+    { "type": "build", "section": "📦 Build System", "hidden": true },
+    { "type": "ci", "section": "👷 Continuous Integration", "hidden": true }
   ],
   "packages": {
     ".": {

@@ -1,8 +1,4 @@
 import re
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from collections.abc import Sequence
 
 PATTERN: re.Pattern[str] = re.compile(
     r"(?P<type>\w+)(?:\((?P<scope>[^\)]+)\))?(?P<breaking>!)?: (?P<description>.+)"
@@ -10,10 +6,14 @@ PATTERN: re.Pattern[str] = re.compile(
 
 
 def sanitize(msg: str) -> str:
-    msg = msg.strip()
-    msg = msg.removeprefix("<Answer>").removesuffix("</Answer>")
-    msg = msg.strip()
-    lines: Sequence[str] = [sanitize_line(line) for line in msg.splitlines()]
+    while True:
+        msg_old: str = msg
+        msg = msg.removeprefix("```").removesuffix("```")
+        msg = msg.removeprefix("<Answer>").removesuffix("</Answer>")
+        msg = msg.strip()
+        if msg == msg_old:
+            break
+    lines: list[str] = [sanitize_line(line) for line in msg.splitlines()]
     return "\n".join(lines)
 
 

@@ -2,12 +2,12 @@ import babel.numbers
 import rich
 from rich.table import Table
 
-from aic import pretty as _pretty
-from aic.api import openrouter as _openrouter
+from aic import pretty
+from aic.api import openrouter
 
 
 def list_models() -> None:
-    models: list[_openrouter.Model] = _openrouter.get_models()
+    models: list[openrouter.Model] = openrouter.get_models()
     table = Table(title="Models")
     table.add_column("ID", style="bright_cyan")
     table.add_column("Context", style="bright_magenta", justify="right")
@@ -19,7 +19,7 @@ def list_models() -> None:
         table.add_row(
             model.id.removeprefix("openai/"),
             babel.numbers.format_number(model.context_length),
-            _pretty.format_currency(model.pricing.prompt * 1000),
-            _pretty.format_currency(model.pricing.completion * 1000),
+            pretty.format_currency(model.pricing.prompt * 1000),
+            pretty.format_currency(model.pricing.completion * 1000),
         )
     rich.print(table)

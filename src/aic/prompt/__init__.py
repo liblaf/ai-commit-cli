@@ -1,16 +1,17 @@
 import string
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import questionary
-import tiktoken
 from loguru import logger
 
-from aic import token as _token
-from aic.api import openrouter as _openrouter
-from aic.prompt import _type
-from aic.prompt import template as _template
+from aic import token
+from aic.api import openrouter
+from aic.prompt import _type, template
 
-TEMPLATE: string.Template = string.Template(_template.TEMPLATE)
+if TYPE_CHECKING:
+    import tiktoken
+
+TEMPLATE: string.Template = string.Template(template.TEMPLATE)
 
 
 def _ask(question: questionary.Question) -> Any:
@@ -65,7 +66,7 @@ class Prompt:
             self.breaking_change = None
         return self.breaking_change
 
-    def build(self, diff: str, model: _openrouter.Model, max_tokens: int) -> str:
+    def build(self, diff: str, model: openrouter.Model, maxtokens: int) -> str:
         _: Any
         prompt: str = TEMPLATE.substitute(
             {
@@ -77,21 +78,21 @@ class Prompt:
         )
         model_id: str
         _, _, model_id = model.id.partition("/")
-        num_tokens: int = (
-            _token.num_tokens_from_messages(
+        numtokens: int = (
+            token.num_tokens_from_messages(
                 [{"role": "user", "content": prompt}], model_id
             )
-            + max_tokens
+            + maxtokens
         )
-        if num_tokens > model.context_length:
-            encoding: tiktoken.Encoding = tiktoken.encoding_for_model(model_id)
+        if numtokens > model.context_length:
+            encoding: tiktoken.Encoding = token.encoding_for_model(model_id)
             tokens: list[int] = encoding.encode(diff)
-            origin_tokens: int = len(tokens)
-            tokens_truncated: list[int] = tokens[: model.context_length - num_tokens]
+            origintokens: int = len(tokens)
+            tokens_truncated: list[int] = tokens[: model.context_length - numtokens]
             diff_truncated: str = encoding.decode(tokens_truncated)
             logger.warning(
                 "Truncated diff from {} to {} tokens",
-                origin_tokens,
+                origintokens,
                 len(tokens_truncated),
             )
             prompt = TEMPLATE.substitute(
