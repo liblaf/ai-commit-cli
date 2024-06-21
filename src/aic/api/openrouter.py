@@ -4,17 +4,17 @@ import httpx
 import pydantic
 
 
+class Pricing(pydantic.BaseModel):
+    prompt: float
+    completion: float
+    request: float
+    image: float
+
+
 class Model(pydantic.BaseModel):
     id: str
     name: str
     description: str
-
-    class Pricing(pydantic.BaseModel):
-        prompt: float
-        completion: float
-        request: float
-        image: float
-
     pricing: Pricing
     context_length: int
 

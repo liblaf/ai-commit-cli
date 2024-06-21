@@ -18,6 +18,10 @@ def main(*pathspec: str, cfg: config.Config, verify: bool) -> None:
     git.status(*pathspec)
     diff: str = git.diff(*pathspec)
     model_info: openrouter.Model = openrouter.get_model(cfg.model)
+    if cfg.pricing is not None:
+        model_info.pricing = cfg.pricing
+    if cfg.context_length is not None:
+        model_info.context_length = cfg.context_length
     client = openai.OpenAI(api_key=cfg.api_key, base_url=cfg.base_url)
     prompt_builder = prompt.Prompt()
     prompt_builder.ask()
@@ -66,7 +70,7 @@ def format_tokens(prompt_tokens: int, completion_tokens: int) -> str:
 
 
 def format_cost(
-    prompt_tokens: int, completion_tokens: int, pricing: openrouter.Model.Pricing
+    prompt_tokens: int, completion_tokens: int, pricing: openrouter.Pricing
 ) -> str:
     prompt_cost: float = prompt_tokens * pricing.prompt
     completion_cost: float = completion_tokens * pricing.completion

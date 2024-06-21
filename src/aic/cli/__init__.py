@@ -18,6 +18,7 @@ def main(
     base_url: Annotated[Optional[str], typer.Option(envvar="OPENAI_BASE_URL")] = None,  # noqa: UP007
     model: Annotated[Optional[str], typer.Option()] = None,  # noqa: UP007
     max_tokens: Annotated[Optional[int], typer.Option()] = None,  # noqa: UP007
+    context_length: Annotated[Optional[int], typer.Option()] = None,  # noqa: UP007
     verify: Annotated[bool, typer.Option()] = True,
 ) -> None:
     log.init()
@@ -36,4 +37,6 @@ def main(
         cfg.model = model
     if max_tokens is not None:
         cfg.max_tokens = max_tokens
+    if context_length is not None:
+        cfg.context_length = context_length
     cli_main.main(*pathspec, cfg=cfg, verify=verify)
