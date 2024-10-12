@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.8.3](https://github.com/liblaf/ai-commit-cli/compare/v0.8.2...v0.8.3) (2024-10-12)
+
+
+### 🐛 Bug Fixes
+
+* refactor pricing model and context length handling ([32aace9](https://github.com/liblaf/ai-commit-cli/commit/32aace9dc152a2cacc7bf713e45b25e30b1ac00b))
+
+
+### ⬆️ Dependencies
+
+* **deps:** update eifinger/setup-rye action to v4 ([9d807e7](https://github.com/liblaf/ai-commit-cli/commit/9d807e70029f67c57cfcd0698c8afb788b98b14d))
+* **deps:** update peter-evans/create-pull-request action to v7 ([0b9a322](https://github.com/liblaf/ai-commit-cli/commit/0b9a3226fc4974cbb5fd6bd68a627699a88bf1e7))
+
 ## [0.8.2](https://github.com/liblaf/ai-commit-cli/compare/v0.8.1...v0.8.2) (2024-06-15)
 
 ### 🐛 Bug Fixes
