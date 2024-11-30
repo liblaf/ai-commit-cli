@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.4](https://github.com/liblaf/ai-commit-cli/compare/v0.8.3...v0.8.4) (2024-11-30)
+
+
+### 📝 Documentation
+
+* mark project as deprecated and provide alternative ([20b5725](https://github.com/liblaf/ai-commit-cli/commit/20b572553b3d0d5ac4d1eac66bc83686dbe8e7b1))
+
 ## [0.8.3](https://github.com/liblaf/ai-commit-cli/compare/v0.8.2...v0.8.3) (2024-10-12)
 
 
